@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { router } from 'expo-router'
 import { ALL_DROPS } from '../../src/lib/drops/registry'
 import { Button } from '../../src/components/ui/Button'
+import { useCartStore } from '../../src/store/cart'
 
 function CountdownTimer({ launchDate }: { launchDate: string }) {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
@@ -43,6 +45,7 @@ function CountdownTimer({ launchDate }: { launchDate: string }) {
 export default function DropsScreen() {
   const [email, setEmail] = useState('')
   const [ageConfirmed, setAgeConfirmed] = useState(false)
+  const itemCount = useCartStore(s => s.itemCount())
 
   const activeDrop = ALL_DROPS.find(d => d.status === 'upcoming' || d.status === 'live')
 
@@ -56,9 +59,21 @@ export default function DropsScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-cream">
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 20 }}>
-        <Text className="text-2xl font-bold text-gray-800 mb-1">Drops</Text>
-        <Text className="text-gray-500 text-sm mb-6">Limited releases. Once they're gone, they're gone.</Text>
+      <View className="px-5 pt-4 pb-3 flex-row items-center justify-between">
+        <View>
+          <Text className="text-2xl font-bold text-gray-800">Drops</Text>
+          <Text className="text-gray-500 text-sm">Limited releases. Once they're gone, they're gone.</Text>
+        </View>
+        <TouchableOpacity onPress={() => router.push('/cart')} className="w-10 h-10 items-center justify-center">
+          <Text className="text-2xl">🛒</Text>
+          {itemCount > 0 && (
+            <View className="absolute -top-1 -right-1 bg-sage rounded-full w-5 h-5 items-center justify-center">
+              <Text className="text-white text-xs font-bold">{itemCount > 9 ? '9+' : itemCount}</Text>
+            </View>
+          )}
+        </TouchableOpacity>
+      </View>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 20 }}>
 
         {ALL_DROPS.map(drop => (
           <View key={drop.id} className="bg-white rounded-3xl p-5 mb-4 shadow-sm">

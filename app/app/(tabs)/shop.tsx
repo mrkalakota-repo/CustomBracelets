@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
-import { View, Text, ScrollView, TouchableOpacity, FlatList } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native'
 import { router, useLocalSearchParams } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { ALL_PRODUCTS } from '../../src/lib/products/catalog'
 import { BraceletCard } from '../../src/components/ui/BraceletCard'
+import { useCartStore } from '../../src/store/cart'
 
 const TYPE_FILTERS = [
   { id: 'all',       label: 'All' },
@@ -17,6 +18,7 @@ const TYPE_FILTERS = [
 export default function ShopScreen() {
   const params = useLocalSearchParams<{ type?: string }>()
   const [activeType, setActiveType] = useState(params.type ?? 'all')
+  const itemCount = useCartStore(s => s.itemCount())
 
   const filtered = ALL_PRODUCTS.filter(p => {
     const typeMatch = activeType === 'all' || p.type === activeType
@@ -25,21 +27,30 @@ export default function ShopScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-cream">
-      <View className="px-5 pt-2 pb-3">
+      <View className="px-5 pt-2 pb-3 flex-row items-center justify-between">
         <Text className="text-2xl font-bold text-gray-800">Shop</Text>
+        <TouchableOpacity onPress={() => router.push('/cart')} className="w-10 h-10 items-center justify-center">
+          <Text className="text-2xl">🛒</Text>
+          {itemCount > 0 && (
+            <View className="absolute -top-1 -right-1 bg-sage rounded-full w-5 h-5 items-center justify-center">
+              <Text className="text-white text-xs font-bold">{itemCount > 9 ? '9+' : itemCount}</Text>
+            </View>
+          )}
+        </TouchableOpacity>
       </View>
 
       {/* Type Filter */}
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 20, gap: 8, paddingBottom: 12 }}
+        contentContainerStyle={{ paddingHorizontal: 20, gap: 8, paddingBottom: 12, alignItems: 'center' }}
       >
         {TYPE_FILTERS.map(f => (
           <TouchableOpacity
             key={f.id}
             onPress={() => setActiveType(f.id)}
-            className={`px-4 py-2 rounded-full ${activeType === f.id ? 'bg-sage' : 'bg-white'}`}
+            style={{ height: 34 }}
+            className={`px-4 rounded-full items-center justify-center ${activeType === f.id ? 'bg-sage' : 'bg-white'}`}
           >
             <Text className={`text-sm font-medium ${activeType === f.id ? 'text-white' : 'text-gray-600'}`}>
               {f.label}
