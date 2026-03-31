@@ -1,0 +1,11 @@
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="400" fill="#EEF3EE"/>
+  <!-- soft drop shadow -->
+  <ellipse cx="203" cy="205" rx="156" ry="73" fill="none" stroke="#5a8a5a" stroke-width="26" opacity="0.18"/>
+  <!-- outer bead ring -->
+  <ellipse cx="200" cy="200" rx="156" ry="73" fill="none" stroke="#6d9e6d" stroke-width="26"
+    stroke-dasharray="21 9" stroke-linecap="round"/>
+  <!-- inner highlight -->
+  <ellipse cx="200" cy="200" rx="156" ry="73" fill="none" stroke="#b8d4b4" stroke-width="10"
+    stroke-dasharray="21 9" stroke-linecap="round" stroke-dashoffset="5" opacity="0.6"/>
+</svg>

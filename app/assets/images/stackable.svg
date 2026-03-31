@@ -1,0 +1,16 @@
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="400" fill="#F5F0E8"/>
+  <!-- shadows -->
+  <ellipse cx="203" cy="191" rx="158" ry="74" fill="none" stroke="#000" stroke-width="14" opacity="0.07"/>
+  <ellipse cx="203" cy="203" rx="158" ry="74" fill="none" stroke="#000" stroke-width="14" opacity="0.07"/>
+  <ellipse cx="203" cy="215" rx="158" ry="74" fill="none" stroke="#000" stroke-width="14" opacity="0.07"/>
+  <!-- sage bracelet -->
+  <ellipse cx="200" cy="188" rx="157" ry="73" fill="none" stroke="#8FAF8A" stroke-width="13"/>
+  <!-- gold bracelet -->
+  <ellipse cx="200" cy="200" rx="155" ry="71" fill="none" stroke="#C9A84C" stroke-width="13"/>
+  <!-- rose bracelet -->
+  <ellipse cx="200" cy="212" rx="157" ry="73" fill="none" stroke="#D4947C" stroke-width="13"/>
+  <!-- beaded texture on top -->
+  <ellipse cx="200" cy="188" rx="157" ry="73" fill="none" stroke="#b8d4b4" stroke-width="5"
+    stroke-dasharray="16 8" stroke-linecap="round" opacity="0.5"/>
+</svg>

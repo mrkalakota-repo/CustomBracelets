@@ -1,0 +1,17 @@
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="400" fill="#F8F0EE"/>
+  <!-- shadow -->
+  <ellipse cx="203" cy="205" rx="156" ry="73" fill="none" stroke="#8a3a3a" stroke-width="22" opacity="0.14"/>
+  <!-- main bracelet band -->
+  <ellipse cx="200" cy="200" rx="156" ry="73" fill="none" stroke="#D4947C" stroke-width="18"/>
+  <!-- highlight -->
+  <ellipse cx="200" cy="200" rx="156" ry="73" fill="none" stroke="#e8b8a8" stroke-width="7" opacity="0.6"/>
+  <!-- small bead accents on cord -->
+  <ellipse cx="200" cy="200" rx="156" ry="73" fill="none" stroke="#C97070" stroke-width="7"
+    stroke-dasharray="5 38" stroke-linecap="round"/>
+  <!-- charm connector line at bottom (200, 273) -->
+  <line x1="200" y1="271" x2="200" y2="282" stroke="#C9A84C" stroke-width="3" stroke-linecap="round"/>
+  <!-- heart charm -->
+  <path d="M200 295 C200 295 188 282 188 275 C188 269 194 266 200 272 C206 266 212 269 212 275 C212 282 200 295 200 295Z"
+    fill="#C97070"/>
+</svg>

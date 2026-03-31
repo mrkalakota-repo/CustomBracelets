@@ -1,0 +1,41 @@
+{
+  "expo": {
+    "name": "The Bead Bar",
+    "slug": "the-bead-bar",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "thebeadbar",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F5F0E8"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.thebeadbar.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#F5F0E8"
+      },
+      "package": "com.thebeadbar.app"
+    },
+
+    "plugins": [
+      "expo-router",
+      [
+        "@stripe/stripe-react-native",
+        {
+          "merchantIdentifier": "merchant.com.thebeadbar.app",
+          "enableGooglePay": true
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

@@ -1,0 +1,25 @@
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="400" fill="#F0EAE8"/>
+  <!-- soft bg circle -->
+  <circle cx="200" cy="200" r="180" fill="#F8F2F0" opacity="0.7"/>
+  <!-- shadows -->
+  <ellipse cx="203" cy="193" rx="158" ry="74" fill="none" stroke="#000" stroke-width="16" opacity="0.06"/>
+  <ellipse cx="203" cy="203" rx="158" ry="74" fill="none" stroke="#000" stroke-width="16" opacity="0.06"/>
+  <ellipse cx="203" cy="213" rx="158" ry="74" fill="none" stroke="#000" stroke-width="16" opacity="0.06"/>
+  <!-- three spring-toned bracelets -->
+  <ellipse cx="200" cy="190" rx="157" ry="73" fill="none" stroke="#c4d8b8" stroke-width="14"/>
+  <ellipse cx="200" cy="200" rx="155" ry="71" fill="none" stroke="#e8c4d0" stroke-width="14"/>
+  <ellipse cx="200" cy="210" rx="157" ry="73" fill="none" stroke="#c8b8d8" stroke-width="14"/>
+  <!-- floral dots — top of bracelet -->
+  <circle cx="200" cy="117" r="8" fill="#e8c4d0"/>
+  <circle cx="200" cy="117" r="4" fill="#c97070"/>
+  <circle cx="224" cy="120" r="6" fill="#c4d8b8"/>
+  <circle cx="176" cy="120" r="6" fill="#c4d8b8"/>
+  <circle cx="246" cy="129" r="5" fill="#c8b8d8"/>
+  <circle cx="154" cy="129" r="5" fill="#c8b8d8"/>
+  <!-- floral dots — bottom of bracelet -->
+  <circle cx="200" cy="283" r="8" fill="#e8c4d0"/>
+  <circle cx="200" cy="283" r="4" fill="#c97070"/>
+  <circle cx="224" cy="280" r="6" fill="#c4d8b8"/>
+  <circle cx="176" cy="280" r="6" fill="#c4d8b8"/>
+</svg>

@@ -1,0 +1,13 @@
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="400" fill="#FAF6EE"/>
+  <!-- shadow -->
+  <ellipse cx="203" cy="205" rx="156" ry="73" fill="none" stroke="#8a6010" stroke-width="22" opacity="0.2"/>
+  <!-- chain base -->
+  <ellipse cx="200" cy="200" rx="156" ry="73" fill="none" stroke="#b8860a" stroke-width="20"/>
+  <!-- chain links -->
+  <ellipse cx="200" cy="200" rx="156" ry="73" fill="none" stroke="#C9A84C" stroke-width="14"
+    stroke-dasharray="22 12" stroke-linecap="square"/>
+  <!-- gold shine -->
+  <ellipse cx="200" cy="200" rx="156" ry="73" fill="none" stroke="#f0d060" stroke-width="5"
+    stroke-dasharray="7 27" stroke-linecap="round" opacity="0.7"/>
+</svg>

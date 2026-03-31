@@ -1,0 +1,12 @@
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="400" fill="#F5F0E8"/>
+  <!-- shadow -->
+  <ellipse cx="203" cy="205" rx="156" ry="73" fill="none" stroke="#8a6a3a" stroke-width="28" opacity="0.12"/>
+  <!-- three cord strands -->
+  <ellipse cx="200" cy="192" rx="155" ry="72" fill="none" stroke="#c8a86e" stroke-width="9" stroke-linecap="round"/>
+  <ellipse cx="200" cy="200" rx="155" ry="72" fill="none" stroke="#d4b880" stroke-width="9" stroke-linecap="round"/>
+  <ellipse cx="200" cy="208" rx="155" ry="72" fill="none" stroke="#c8a86e" stroke-width="9" stroke-linecap="round"/>
+  <!-- knotted texture accents -->
+  <ellipse cx="200" cy="200" rx="155" ry="72" fill="none" stroke="#8FAF8A" stroke-width="4"
+    stroke-dasharray="5 40" stroke-linecap="round" opacity="0.7"/>
+</svg>

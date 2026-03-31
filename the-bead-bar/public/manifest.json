@@ -1,0 +1,30 @@
+{
+  "name": "The Bead Bar",
+  "short_name": "Bead Bar",
+  "description": "Custom bracelets, seasonal drops & BFF sets.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F5F0E8",
+  "theme_color": "#8FAF8A",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "screenshots": [
+    { "src": "/screenshots/home.jpg",    "sizes": "390x844", "type": "image/jpeg", "form_factor": "narrow" },
+    { "src": "/screenshots/builder.jpg", "sizes": "390x844", "type": "image/jpeg", "form_factor": "narrow" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Build a Bracelet",
+      "url": "/builder",
+      "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Shop Now",
+      "url": "/shop",
+      "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96" }]
+    }
+  ]
+}
