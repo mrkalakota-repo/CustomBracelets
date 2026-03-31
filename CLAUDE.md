@@ -4,14 +4,44 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Structure
 
-This is a monorepo for The Bead Bar — a D2C bracelet business. Two separate projects, each with their own `CLAUDE.md`:
+This is a monorepo for The Bead Bar — a D2C bracelet business. One git repo at this root level.
 
 | Directory | What it is | Stack |
 |---|---|---|
 | `the-bead-bar/` | Website + PWA | Next.js 16, TypeScript, Tailwind, Stripe, Supabase |
 | `app/` | iOS + Android native app | Expo SDK 54, Expo Router 6, React Native, NativeWind, Zustand |
 
-Read the sub-project's `CLAUDE.md` before working in either directory.
+**Read the sub-project's `CLAUDE.md` before working in either directory.** Each has full architecture, env vars, and testing details.
+
+## Commands
+
+### Website (`the-bead-bar/`)
+
+```bash
+cd the-bead-bar
+npm run dev              # dev server at localhost:3000
+npm run build            # production build
+npm run lint             # ESLint
+npm test                 # Jest (unit + component)
+npm run test:watch       # Jest watch mode
+npm run test:e2e         # Playwright E2E (auto-starts dev server)
+npx jest __tests__/lib/builder/pricing.test.ts   # single test file
+npx playwright test e2e/builder-flow.spec.ts      # single E2E spec
+```
+
+### App (`app/`)
+
+```bash
+cd app
+npx expo run:ios                    # first build — installs native deps (~5 min)
+npx expo start --ios --clear        # subsequent iOS starts
+npx expo start --android --clear    # subsequent Android starts
+npm run lint
+npx tsc --noEmit
+cd ios && pod install --no-repo-update   # after adding native deps
+```
+
+**Never use `npx expo start` without `--ios` or `--android`** — web bundler fails. **Never use Expo Go** — requires a native dev build.
 
 ## Shared Business Logic
 
