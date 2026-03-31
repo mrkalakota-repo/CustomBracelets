@@ -1,16 +1,19 @@
 import React from 'react'
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router } from 'expo-router'
 import { useCartStore } from '../../src/store/cart'
 
+const comingSoon = (label: string) => () =>
+  Alert.alert(label, 'This feature is coming soon!')
+
 const MENU_ITEMS = [
-  { icon: '📦', label: 'Order History',    onPress: () => {} },
-  { icon: '❤️', label: 'Wishlist',         onPress: () => {} },
-  { icon: '🔔', label: 'Drop Alerts',      onPress: () => {} },
-  { icon: '🚚', label: 'Shipping Policy',  onPress: () => {} },
-  { icon: '↩️', label: 'Returns',          onPress: () => {} },
-  { icon: '🔒', label: 'Privacy Policy',   onPress: () => {} },
+  { icon: '📦', label: 'Order History',   onPress: comingSoon('Order History'),   available: false },
+  { icon: '❤️', label: 'Wishlist',        onPress: comingSoon('Wishlist'),        available: false },
+  { icon: '🔔', label: 'Drop Alerts',     onPress: comingSoon('Drop Alerts'),     available: false },
+  { icon: '🚚', label: 'Shipping Policy', onPress: () => router.push('/(tabs)/drops'), available: true },
+  { icon: '↩️', label: 'Returns',         onPress: comingSoon('Returns'),         available: false },
+  { icon: '🔒', label: 'Privacy Policy',  onPress: comingSoon('Privacy Policy'),  available: false },
 ]
 
 export default function ProfileScreen() {
@@ -56,6 +59,9 @@ export default function ProfileScreen() {
             >
               <Text className="text-xl mr-3">{item.icon}</Text>
               <Text className="text-gray-800 text-base flex-1">{item.label}</Text>
+              {!item.available && (
+                <Text className="text-gray-300 text-xs mr-2">Soon</Text>
+              )}
               <Text className="text-gray-300">›</Text>
             </TouchableOpacity>
           ))}

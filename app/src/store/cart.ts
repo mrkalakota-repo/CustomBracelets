@@ -5,16 +5,16 @@ import { calculatePrice } from '../lib/builder/pricing'
 import type { BaseStyle } from '../lib/builder/compatibility'
 
 export interface CartItem {
-  id:           string
-  product:      Product | null
-  baseStyle?:   BaseStyle
-  primaryColor?: string
+  id:             string
+  product:        Product | null
+  baseStyle?:     BaseStyle
+  primaryColor?:  string
   accentPattern?: string
-  addOns?:      AddOns
-  customName?:  string
-  price:        number
-  quantity:     number
-  isCustom:     boolean
+  addOns?:        AddOns
+  customName?:    string
+  price:          number
+  quantity:       number
+  isCustom:       boolean
 }
 
 interface CartStore {
@@ -27,10 +27,22 @@ interface CartStore {
   itemCount:   () => number
 }
 
+function isValidPrice(price: number): boolean {
+  return typeof price === 'number' && isFinite(price) && price >= 0
+}
+
 export const useCartStore = create<CartStore>((set, get) => ({
   items: [],
 
   addProduct: (product) => {
+    if (!product?.id || !product?.name) {
+      console.warn('[cart] addProduct: invalid product', product)
+      return
+    }
+    if (!isValidPrice(product.price)) {
+      console.warn('[cart] addProduct: invalid price', product.price)
+      return
+    }
     set(state => ({
       items: [
         ...state.items,
@@ -46,6 +58,15 @@ export const useCartStore = create<CartStore>((set, get) => ({
   },
 
   addCustom: (config) => {
+    if (!config?.baseStyle) {
+      console.warn('[cart] addCustom: missing baseStyle', config)
+      return
+    }
+    const price = calculatePrice(config.baseStyle, config.addOns ?? {})
+    if (!isValidPrice(price)) {
+      console.warn('[cart] addCustom: calculated price is invalid', price)
+      return
+    }
     set(state => ({
       items: [
         ...state.items,
@@ -53,7 +74,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
           id:       `custom-${Date.now()}`,
           product:  null,
           ...config,
-          price:    calculatePrice(config.baseStyle, config.addOns ?? {}),
+          price,
           quantity: 1,
           isCustom: true,
         },

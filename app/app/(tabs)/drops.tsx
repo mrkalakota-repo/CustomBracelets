@@ -42,19 +42,31 @@ function CountdownTimer({ launchDate }: { launchDate: string }) {
   )
 }
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
 export default function DropsScreen() {
   const [email, setEmail] = useState('')
   const [ageConfirmed, setAgeConfirmed] = useState(false)
+  const [loading, setLoading] = useState(false)
   const itemCount = useCartStore(s => s.itemCount())
 
   const activeDrop = ALL_DROPS.find(d => d.status === 'upcoming' || d.status === 'live')
 
-  function handleNotifyMe() {
-    if (!email) return Alert.alert('Enter your email to get notified')
-    if (!ageConfirmed) return Alert.alert('Please confirm you are 13 or older')
-    Alert.alert('You\'re on the list! 🌸', `We'll notify ${email} when ${activeDrop?.name} drops.`)
-    setEmail('')
-    setAgeConfirmed(false)
+  async function handleNotifyMe() {
+    if (!email || !EMAIL_RE.test(email)) return Alert.alert('Invalid email', 'Please enter a valid email address.')
+    if (!ageConfirmed) return Alert.alert('Age required', 'Please confirm you are 13 or older.')
+    if (loading) return
+
+    setLoading(true)
+    try {
+      // TODO: call /api/klaviyo/subscribe on the-bead-bar
+      await new Promise(r => setTimeout(r, 800)) // placeholder network delay
+      Alert.alert('You\'re on the list! 🌸', `We'll notify ${email} when ${activeDrop?.name} drops.`)
+      setEmail('')
+      setAgeConfirmed(false)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -128,7 +140,7 @@ export default function DropsScreen() {
                   <Text className="text-gray-500 text-sm">I confirm I am 13 or older</Text>
                 </TouchableOpacity>
 
-                <Button label="Notify Me 🌸" onPress={handleNotifyMe} fullWidth />
+                <Button label={loading ? 'Saving…' : 'Notify Me 🌸'} onPress={handleNotifyMe} loading={loading} fullWidth />
               </>
             )}
 

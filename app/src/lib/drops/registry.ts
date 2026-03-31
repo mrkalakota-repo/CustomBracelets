@@ -22,6 +22,26 @@ export const ALL_DROPS: Drop[] = [
     sneakPeekUrl: '',
     socialCopy:   'Spring is here 🌸 New drop April 15',
   },
+  {
+    id:           'valentines-2026',
+    name:         'Valentine's Edit',
+    theme:        'Love, hearts, and rose gold everything',
+    launchDate:   '2026-02-10T12:00:00Z',
+    status:       'sold_out',
+    productIds:   ['5'],
+    sneakPeekUrl: '',
+    socialCopy:   'Love is in the air 💕 Valentine's drop — sold out!',
+  },
+  {
+    id:           'new-year-2026',
+    name:         'New Year Glow',
+    theme:        'Gold, glitter, and fresh starts',
+    launchDate:   '2026-01-01T00:00:00Z',
+    status:       'ended',
+    productIds:   ['3', '4'],
+    sneakPeekUrl: '',
+    socialCopy:   '✨ New year, new stack. Drop has ended.',
+  },
 ]
 
 export function getActiveOrUpcomingDrop(): Drop | undefined {
