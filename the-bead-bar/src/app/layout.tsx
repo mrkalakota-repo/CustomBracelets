@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
+import { CartErrorBoundary } from "@/components/CartErrorBoundary";
 import { PwaInit } from "@/components/PwaInit";
 import { Nav } from "@/components/Nav";
 
@@ -34,11 +35,13 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <CartProvider>
-          <PwaInit />
-          <Nav />
-          {children}
-        </CartProvider>
+        <CartErrorBoundary>
+          <CartProvider>
+            <PwaInit />
+            <Nav />
+            {children}
+          </CartProvider>
+        </CartErrorBoundary>
       </body>
     </html>
   );

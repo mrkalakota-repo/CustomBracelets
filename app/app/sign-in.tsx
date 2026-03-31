@@ -5,20 +5,24 @@ import {
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router } from 'expo-router'
+import { useAuth } from '../src/context/AuthContext'
 
 type Mode = 'signin' | 'signup'
 
 const PIN_LENGTH = 6
 
 export default function SignInScreen() {
-  const [mode, setMode] = useState<Mode>('signin')
-  const [phone, setPhone] = useState('')
-  const [pin, setPin] = useState('')
-  const [confirmPin, setConfirmPin] = useState('')
-  const [name, setName] = useState('')
-  const [ageConfirmed, setAgeConfirmed] = useState(false)
+  const { signInWithPhone, signUpWithPhone } = useAuth()
 
-  const pinRef = useRef<TextInput>(null)
+  const [mode, setMode]               = useState<Mode>('signin')
+  const [phone, setPhone]             = useState('')
+  const [pin, setPin]                 = useState('')
+  const [confirmPin, setConfirmPin]   = useState('')
+  const [name, setName]               = useState('')
+  const [ageConfirmed, setAgeConfirmed] = useState(false)
+  const [loading, setLoading]         = useState(false)
+
+  const pinRef        = useRef<TextInput>(null)
   const confirmPinRef = useRef<TextInput>(null)
 
   function formatPhone(raw: string) {
@@ -48,7 +52,7 @@ export default function SignInScreen() {
     return phone.replace(/\D/g, '')
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     if (rawPhone().length < 10) {
       Alert.alert('Invalid phone number', 'Please enter a valid 10-digit US phone number.')
       return
@@ -63,7 +67,7 @@ export default function SignInScreen() {
         return
       }
       if (pin !== confirmPin) {
-        Alert.alert('PINs don\'t match', 'Please make sure both PINs match.')
+        Alert.alert("PINs don't match", 'Please make sure both PINs match.')
         return
       }
       if (!ageConfirmed) {
@@ -72,12 +76,29 @@ export default function SignInScreen() {
       }
     }
 
-    // TODO: wire up Supabase phone OTP or custom PIN auth
-    Alert.alert(
-      mode === 'signin' ? 'Sign In' : 'Account Created',
-      'Phone + PIN authentication coming soon! Will be connected to Supabase.',
-      [{ text: 'OK', onPress: () => router.back() }],
-    )
+    setLoading(true)
+
+    if (mode === 'signin') {
+      const { error } = await signInWithPhone(phone, pin)
+      setLoading(false)
+      if (error) {
+        Alert.alert('Sign in failed', error)
+        return
+      }
+      router.back()
+    } else {
+      const { error, needsVerification } = await signUpWithPhone(phone, pin, name.trim())
+      setLoading(false)
+      if (error) {
+        Alert.alert('Sign up failed', error)
+        return
+      }
+      if (needsVerification) {
+        router.push({ pathname: '/verify-phone', params: { phone } })
+      } else {
+        router.back()
+      }
+    }
   }
 
   function switchMode(m: Mode) {
@@ -92,9 +113,18 @@ export default function SignInScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         className="flex-1"
       >
-        <ScrollView contentContainerStyle={{ padding: 24 }} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+        <ScrollView
+          contentContainerStyle={{ padding: 24 }}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
           {/* Back */}
-          <TouchableOpacity onPress={() => router.back()} className="mb-6">
+          <TouchableOpacity
+            onPress={() => router.back()}
+            className="mb-6"
+            accessibilityLabel="Go back"
+            accessibilityRole="button"
+          >
             <Text className="text-sage text-base font-semibold">← Back</Text>
           </TouchableOpacity>
 
@@ -115,6 +145,9 @@ export default function SignInScreen() {
                 key={m}
                 onPress={() => switchMode(m)}
                 className={`flex-1 py-2.5 rounded-xl items-center ${mode === m ? 'bg-sage' : ''}`}
+                accessibilityRole="tab"
+                accessibilityState={{ selected: mode === m }}
+                accessibilityLabel={m === 'signin' ? 'Sign In tab' : 'Sign Up tab'}
               >
                 <Text className={`font-semibold text-sm ${mode === m ? 'text-white' : 'text-gray-500'}`}>
                   {m === 'signin' ? 'Sign In' : 'Sign Up'}
@@ -136,6 +169,7 @@ export default function SignInScreen() {
                 onSubmitEditing={() => pinRef.current?.focus()}
                 className="bg-white border border-cream-dark rounded-2xl px-4 py-3.5 text-gray-800 text-sm"
                 placeholderTextColor="#9CA3AF"
+                accessibilityLabel="Your name"
               />
             </View>
           )}
@@ -152,6 +186,7 @@ export default function SignInScreen() {
               onSubmitEditing={() => pinRef.current?.focus()}
               className="bg-white border border-cream-dark rounded-2xl px-4 py-3.5 text-gray-800 text-sm"
               placeholderTextColor="#9CA3AF"
+              accessibilityLabel="Phone number"
             />
           </View>
 
@@ -160,11 +195,12 @@ export default function SignInScreen() {
             <Text className="text-gray-600 text-sm font-medium mb-1.5">
               {mode === 'signin' ? 'PIN' : 'Create PIN'}
             </Text>
-            {/* Visual PIN dots */}
             <TouchableOpacity
               activeOpacity={1}
               onPress={() => pinRef.current?.focus()}
               className="bg-white border border-cream-dark rounded-2xl px-4 py-3.5 flex-row justify-center gap-4"
+              accessibilityLabel={mode === 'signin' ? 'PIN field' : 'Create PIN field'}
+              accessibilityRole="button"
             >
               {Array.from({ length: PIN_LENGTH }).map((_, i) => (
                 <View
@@ -173,7 +209,6 @@ export default function SignInScreen() {
                 />
               ))}
             </TouchableOpacity>
-            {/* Hidden actual input */}
             <TextInput
               ref={pinRef}
               value={pin}
@@ -199,6 +234,8 @@ export default function SignInScreen() {
                     ? 'border-red-300'
                     : 'border-cream-dark'
                 }`}
+                accessibilityLabel="Confirm PIN field"
+                accessibilityRole="button"
               >
                 {Array.from({ length: PIN_LENGTH }).map((_, i) => (
                   <View
@@ -233,6 +270,9 @@ export default function SignInScreen() {
             <TouchableOpacity
               onPress={() => setAgeConfirmed(!ageConfirmed)}
               className="flex-row items-center gap-3 mb-6"
+              accessibilityRole="checkbox"
+              accessibilityState={{ checked: ageConfirmed }}
+              accessibilityLabel="I confirm I am 13 or older"
             >
               <View className={`w-5 h-5 rounded border-2 items-center justify-center ${ageConfirmed ? 'bg-sage border-sage' : 'border-gray-300'}`}>
                 {ageConfirmed && <Text className="text-white text-xs font-bold">✓</Text>}
@@ -244,15 +284,24 @@ export default function SignInScreen() {
           {/* Submit */}
           <TouchableOpacity
             onPress={handleSubmit}
-            className="bg-sage rounded-full py-4 items-center mb-4"
+            disabled={loading}
+            className={`rounded-full py-4 items-center mb-4 ${loading ? 'bg-gray-300' : 'bg-sage'}`}
+            accessibilityRole="button"
+            accessibilityLabel={mode === 'signin' ? 'Sign in' : 'Create account'}
           >
             <Text className="text-white font-bold text-base">
-              {mode === 'signin' ? 'Sign In' : 'Create Account'}
+              {loading
+                ? (mode === 'signin' ? 'Signing in…' : 'Creating account…')
+                : (mode === 'signin' ? 'Sign In' : 'Create Account')}
             </Text>
           </TouchableOpacity>
 
           {mode === 'signin' && (
-            <TouchableOpacity className="items-center py-2">
+            <TouchableOpacity
+              className="items-center py-2"
+              accessibilityRole="button"
+              accessibilityLabel="Forgot PIN"
+            >
               <Text className="text-sage text-sm font-medium">Forgot PIN?</Text>
             </TouchableOpacity>
           )}

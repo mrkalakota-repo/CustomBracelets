@@ -65,12 +65,20 @@ export default function BuilderStep4() {
         <Text className="text-gray-700 font-semibold mb-2">Custom Text <Text className="text-gray-400 font-normal text-sm">(+${ADDON_PRICES.text})</Text></Text>
         <TextInput
           value={current.text ?? ''}
-          onChangeText={val => setAddOns({ ...current, text: val || undefined })}
+          onChangeText={raw => {
+            // Allow letters, numbers, spaces, apostrophe, hyphen, and period only
+            const sanitized = raw.replace(/[^a-zA-Z0-9 '.\-]/g, '').slice(0, 12)
+            setAddOns({ ...current, text: sanitized || undefined })
+          }}
           placeholder="e.g. BFF, your name, a word..."
-          className="bg-white border border-cream-dark rounded-2xl px-4 py-3 text-gray-800 text-sm mb-5"
+          className="bg-white border border-cream-dark rounded-2xl px-4 py-3 text-gray-800 text-sm mb-1"
           placeholderTextColor="#9CA3AF"
           maxLength={12}
+          accessibilityLabel="Custom text engraving"
         />
+        <Text className="text-gray-300 text-xs mb-5 ml-1">
+          {(current.text ?? '').length}/12 · letters, numbers, spaces only
+        </Text>
 
         {/* Gift Wrap */}
         <TouchableOpacity

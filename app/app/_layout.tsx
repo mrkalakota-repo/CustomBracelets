@@ -8,6 +8,7 @@ import * as Font from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect, useState } from 'react'
 import Ionicons from '@expo/vector-icons/Ionicons'
+import { AuthProvider } from '../src/context/AuthContext'
 
 SplashScreen.preventAutoHideAsync()
 
@@ -32,17 +33,22 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <StripeProvider publishableKey={STRIPE_PUBLISHABLE_KEY} merchantIdentifier="merchant.com.thebeadbar.app">
-        <StatusBar style="dark" backgroundColor="#F5F0E8" />
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(tabs)" />
-          <Stack.Screen name="builder" options={{ presentation: 'modal' }} />
-          <Stack.Screen name="product/[id]" />
-          <Stack.Screen name="cart" />
-          <Stack.Screen name="checkout" />
-          <Stack.Screen name="order-confirmation" />
-        </Stack>
-      </StripeProvider>
+      <AuthProvider>
+        <StripeProvider publishableKey={STRIPE_PUBLISHABLE_KEY} merchantIdentifier="merchant.com.thebeadbar.app">
+          <StatusBar style="dark" backgroundColor="#F5F0E8" />
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="(tabs)" />
+            <Stack.Screen name="builder" options={{ presentation: 'modal' }} />
+            <Stack.Screen name="product/[id]" />
+            <Stack.Screen name="cart" />
+            <Stack.Screen name="checkout" />
+            <Stack.Screen name="order-confirmation" />
+            <Stack.Screen name="sign-in" />
+            <Stack.Screen name="verify-phone" />
+            <Stack.Screen name="shipping-policy" />
+          </Stack>
+        </StripeProvider>
+      </AuthProvider>
     </SafeAreaProvider>
   )
 }

@@ -25,11 +25,11 @@ export async function POST(req: Request) {
 
     const { email, type, dropId } = parsed.data
     const listIds: Record<string, string> = {
-      drop:      env.KLAVIYO_DROP_LIST_ID      ?? '',
-      waitlist:  env.KLAVIYO_WAITLIST_LIST_ID  ?? '',
-      marketing: env.KLAVIYO_MARKETING_LIST_ID ?? '',
+      drop:      env.KLAVIYO_DROP_LIST_ID,
+      waitlist:  env.KLAVIYO_WAITLIST_LIST_ID,
+      marketing: env.KLAVIYO_MARKETING_LIST_ID,
     }
-    const listId = listIds[type] ?? listIds.drop
+    const listId = listIds[type]
     await subscribeToList({ email, listId, source: dropId ? `drop:${dropId}` : 'website' })
 
     return NextResponse.json({ success: true })
