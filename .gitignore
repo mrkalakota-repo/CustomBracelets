@@ -15,6 +15,7 @@ the-bead-bar/tsconfig.tsbuildinfo
 
 # Expo / React Native
 app/.expo/
+the-bead-bar/.expo/
 app/ios/build/
 app/android/build/
 app/android/.gradle/
