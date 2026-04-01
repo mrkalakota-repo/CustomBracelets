@@ -14,14 +14,24 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.thebeadbar.app"
+      "bundleIdentifier": "com.thebeadbar.app",
+      "buildNumber": "1",
+      "privacyManifests": {
+        "NSPrivacyAccessedAPITypes": []
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#F5F0E8"
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "backgroundImage": "./assets/images/android-icon-background.png"
       },
-      "package": "com.thebeadbar.app"
+      "package": "com.thebeadbar.app",
+      "versionCode": 1,
+      "permissions": [
+        "android.permission.INTERNET",
+        "android.permission.RECEIVE_SMS",
+        "android.permission.READ_PHONE_STATE"
+      ]
     },
 
     "plugins": [

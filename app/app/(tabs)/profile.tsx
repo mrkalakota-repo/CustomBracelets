@@ -9,12 +9,13 @@ const comingSoon = (label: string) => () =>
   Alert.alert(label, 'This feature is coming soon!')
 
 const MENU_ITEMS = [
-  { icon: '📦', label: 'Order History',    onPress: comingSoon('Order History'),         available: false },
-  { icon: '❤️', label: 'Wishlist',         onPress: comingSoon('Wishlist'),              available: false },
-  { icon: '🔔', label: 'Drop Alerts',      onPress: comingSoon('Drop Alerts'),           available: false },
-  { icon: '🚚', label: 'Shipping Policy',  onPress: () => router.push('/shipping-policy'), available: true },
-  { icon: '↩️', label: 'Returns',          onPress: comingSoon('Returns'),               available: false },
-  { icon: '🔒', label: 'Privacy Policy',   onPress: comingSoon('Privacy Policy'),        available: false },
+  { icon: '📦', label: 'Order History',    onPress: comingSoon('Order History'),              available: false },
+  { icon: '❤️', label: 'Wishlist',         onPress: comingSoon('Wishlist'),                   available: false },
+  { icon: '🔔', label: 'Drop Alerts',      onPress: comingSoon('Drop Alerts'),                available: false },
+  { icon: '🚚', label: 'Shipping Policy',  onPress: () => router.push('/shipping-policy'),    available: true  },
+  { icon: '↩️', label: 'Returns',          onPress: () => router.push('/returns'),            available: true  },
+  { icon: '🔒', label: 'Privacy Policy',   onPress: () => router.push('/privacy-policy'),     available: true  },
+  { icon: '📄', label: 'Terms of Service', onPress: () => router.push('/terms-of-service'),   available: true  },
 ]
 
 export default function ProfileScreen() {

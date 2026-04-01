@@ -9,6 +9,7 @@ interface AuthContextType {
   signInWithPhone:  (phone: string, pin: string) => Promise<{ error: string | null }>
   signUpWithPhone:  (phone: string, pin: string, name: string) => Promise<{ error: string | null; needsVerification: boolean }>
   verifyOtp:        (phone: string, token: string) => Promise<{ error: string | null }>
+  resendOtp:        (phone: string) => Promise<{ error: string | null }>
   signOut:          () => Promise<void>
 }
 
@@ -60,6 +61,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error: error?.message ?? null }
   }
 
+  async function resendOtp(phone: string) {
+    const e164 = toE164(phone)
+    const { error } = await supabase.auth.resend({ phone: e164, type: 'sms' })
+    return { error: error?.message ?? null }
+  }
+
   async function signOut() {
     await supabase.auth.signOut()
   }
@@ -72,6 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signInWithPhone,
       signUpWithPhone,
       verifyOtp,
+      resendOtp,
       signOut,
     }}>
       {children}

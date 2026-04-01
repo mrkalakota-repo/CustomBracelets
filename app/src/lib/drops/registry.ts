@@ -24,13 +24,13 @@ export const ALL_DROPS: Drop[] = [
   },
   {
     id:           'valentines-2026',
-    name:         'Valentine's Edit',
+    name:         "Valentine\u2019s Edit",
     theme:        'Love, hearts, and rose gold everything',
     launchDate:   '2026-02-10T12:00:00Z',
     status:       'sold_out',
     productIds:   ['5'],
     sneakPeekUrl: '',
-    socialCopy:   'Love is in the air 💕 Valentine's drop — sold out!',
+    socialCopy:   "Love is in the air 💕 Valentine\u2019s drop \u2014 sold out!",
   },
   {
     id:           'new-year-2026',

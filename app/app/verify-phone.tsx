@@ -5,14 +5,44 @@ import { router, useLocalSearchParams } from 'expo-router'
 import { useAuth } from '../src/context/AuthContext'
 
 const OTP_LENGTH = 6
+const RESEND_COOLDOWN_S = 30
 
 export default function VerifyPhoneScreen() {
   const { phone } = useLocalSearchParams<{ phone: string }>()
-  const { verifyOtp } = useAuth()
+  const { verifyOtp, resendOtp } = useAuth()
 
   const [otp, setOtp] = useState('')
   const [loading, setLoading] = useState(false)
+  const [resending, setResending] = useState(false)
+  const [cooldown, setCooldown] = useState(0)
   const inputRef = useRef<TextInput>(null)
+  const cooldownRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  function startCooldown() {
+    setCooldown(RESEND_COOLDOWN_S)
+    cooldownRef.current = setInterval(() => {
+      setCooldown(prev => {
+        if (prev <= 1) {
+          clearInterval(cooldownRef.current!)
+          return 0
+        }
+        return prev - 1
+      })
+    }, 1000)
+  }
+
+  async function handleResend() {
+    if (resending || cooldown > 0) return
+    setResending(true)
+    const { error } = await resendOtp(phone ?? '')
+    setResending(false)
+    if (error) {
+      Alert.alert('Could not resend', error)
+    } else {
+      Alert.alert('Code sent', 'A new code has been sent to ' + phone + '.')
+      startCooldown()
+    }
+  }
 
   async function handleVerify() {
     if (otp.length < OTP_LENGTH) return
@@ -99,11 +129,24 @@ export default function VerifyPhoneScreen() {
             </Text>
           </TouchableOpacity>
 
-          <Text className="text-gray-400 text-xs text-center mt-6">
-            Didn't get a code?{' '}
-            <Text className="text-sage font-medium">Resend</Text>
-            {' '}(coming soon)
-          </Text>
+          <TouchableOpacity
+            onPress={handleResend}
+            disabled={resending || cooldown > 0}
+            className="mt-6 self-center"
+            accessibilityRole="button"
+            accessibilityLabel="Resend verification code"
+          >
+            <Text className="text-gray-400 text-xs text-center">
+              {`Didn\u2019t get a code? `}
+              {resending ? (
+                <Text className="text-sage font-medium">Sending…</Text>
+              ) : cooldown > 0 ? (
+                <Text className="text-gray-300 font-medium">Resend in {cooldown}s</Text>
+              ) : (
+                <Text className="text-sage font-medium">Resend</Text>
+              )}
+            </Text>
+          </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>

@@ -43,9 +43,12 @@ export default function RootLayout() {
             <Stack.Screen name="cart" />
             <Stack.Screen name="checkout" />
             <Stack.Screen name="order-confirmation" />
-            <Stack.Screen name="sign-in" />
-            <Stack.Screen name="verify-phone" />
+            <Stack.Screen name="sign-in"          options={{ presentation: 'modal' }} />
+            <Stack.Screen name="verify-phone"    options={{ presentation: 'modal' }} />
             <Stack.Screen name="shipping-policy" />
+            <Stack.Screen name="privacy-policy"  />
+            <Stack.Screen name="returns"         />
+            <Stack.Screen name="terms-of-service" />
           </Stack>
         </StripeProvider>
       </AuthProvider>

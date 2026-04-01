@@ -15,6 +15,13 @@ export function CheckoutWrapper() {
   useEffect(() => {
     if (items.length === 0) return
 
+    // Persist cart snapshot so order-confirmation can send Klaviyo tracking
+    try {
+      sessionStorage.setItem('bead-bar-pending-order', JSON.stringify(items))
+    } catch {
+      // sessionStorage unavailable (private browsing, etc.) — non-fatal
+    }
+
     fetch('/api/checkout', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
