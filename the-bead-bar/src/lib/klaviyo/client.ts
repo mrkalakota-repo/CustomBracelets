@@ -1,3 +1,5 @@
+import { env } from '@/lib/env'
+
 const KLAVIYO_API_URL = 'https://a.klaviyo.com/api'
 
 interface SubscribePayload {
@@ -15,8 +17,7 @@ interface OrderPayload {
 }
 
 export async function subscribeToList({ email, listId, source }: SubscribePayload): Promise<void> {
-  const apiKey = process.env.KLAVIYO_PRIVATE_KEY
-  if (!apiKey) throw new Error('KLAVIYO_PRIVATE_KEY is not set')
+  const apiKey = env.KLAVIYO_API_KEY
 
   const res = await fetch(`${KLAVIYO_API_URL}/profile-subscription-bulk-create-jobs/`, {
     method:  'POST',
@@ -48,8 +49,7 @@ export async function subscribeToList({ email, listId, source }: SubscribePayloa
 }
 
 export async function trackOrder({ email, orderId, total, itemCount, items }: OrderPayload): Promise<void> {
-  const apiKey = process.env.KLAVIYO_PRIVATE_KEY
-  if (!apiKey) throw new Error('KLAVIYO_PRIVATE_KEY is not set')
+  const apiKey = env.KLAVIYO_API_KEY
 
   const res = await fetch(`${KLAVIYO_API_URL}/events/`, {
     method:  'POST',

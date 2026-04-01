@@ -59,11 +59,18 @@ export default function DropsScreen() {
 
     setLoading(true)
     try {
-      // TODO: call /api/klaviyo/subscribe on the-bead-bar
-      await new Promise(r => setTimeout(r, 800)) // placeholder network delay
+      const apiBase = process.env.EXPO_PUBLIC_API_BASE_URL ?? ''
+      const res = await fetch(`${apiBase}/klaviyo-subscribe`, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ email, dropId: activeDrop?.id }),
+      })
+      if (!res.ok) throw new Error('Subscription failed')
       Alert.alert('You\'re on the list! 🌸', `We'll notify ${email} when ${activeDrop?.name} drops.`)
       setEmail('')
       setAgeConfirmed(false)
+    } catch {
+      Alert.alert('Something went wrong', 'Please try again.')
     } finally {
       setLoading(false)
     }
