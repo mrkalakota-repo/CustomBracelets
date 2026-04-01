@@ -165,6 +165,7 @@ export default function SignInScreen() {
                 onChangeText={setName}
                 placeholder="Your name"
                 autoCapitalize="words"
+                autoFocus
                 returnKeyType="next"
                 onSubmitEditing={() => pinRef.current?.focus()}
                 className="bg-white border border-cream-dark rounded-2xl px-4 py-3.5 text-gray-800 text-sm"
@@ -182,6 +183,7 @@ export default function SignInScreen() {
               onChangeText={handlePhoneChange}
               placeholder="(555) 000-0000"
               keyboardType="phone-pad"
+              autoFocus
               returnKeyType="next"
               onSubmitEditing={() => pinRef.current?.focus()}
               className="bg-white border border-cream-dark rounded-2xl px-4 py-3.5 text-gray-800 text-sm"
@@ -218,7 +220,7 @@ export default function SignInScreen() {
               secureTextEntry
               returnKeyType={mode === 'signup' ? 'next' : 'done'}
               onSubmitEditing={() => mode === 'signup' ? confirmPinRef.current?.focus() : handleSubmit()}
-              style={{ position: 'absolute', opacity: 0, height: 0 }}
+              style={{ position: 'absolute', opacity: 0, width: 1, height: 1, top: -100 }}
             />
           </View>
 
@@ -260,7 +262,7 @@ export default function SignInScreen() {
                 secureTextEntry
                 returnKeyType="done"
                 onSubmitEditing={handleSubmit}
-                style={{ position: 'absolute', opacity: 0, height: 0 }}
+                style={{ position: 'absolute', opacity: 0, width: 1, height: 1, top: -100 }}
               />
             </View>
           )}

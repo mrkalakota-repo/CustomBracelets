@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useCart } from '@/context/CartContext'
 import type { CartItem } from '@/lib/cart/cartTypes'
 
-export default function OrderConfirmation() {
+function OrderConfirmationInner() {
   const searchParams  = useSearchParams()
   const { clearCart } = useCart()
   const [status, setStatus] = useState<'loading' | 'success' | 'failed'>('loading')
@@ -106,5 +106,13 @@ export default function OrderConfirmation() {
         </Link>
       </div>
     </div>
+  )
+}
+
+export default function OrderConfirmation() {
+  return (
+    <Suspense fallback={<div className="page-container py-16 text-center text-text-mid">Confirming your order…</div>}>
+      <OrderConfirmationInner />
+    </Suspense>
   )
 }

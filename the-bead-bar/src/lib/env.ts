@@ -3,9 +3,9 @@ import { z } from 'zod'
 const EnvSchema = z.object({
   STRIPE_SECRET_KEY:         z.string().min(1, 'STRIPE_SECRET_KEY is required'),
   KLAVIYO_API_KEY:           z.string().min(1, 'KLAVIYO_API_KEY is required'),
-  KLAVIYO_DROP_LIST_ID:      z.string().min(1, 'KLAVIYO_DROP_LIST_ID is required'),
-  KLAVIYO_WAITLIST_LIST_ID:  z.string().min(1, 'KLAVIYO_WAITLIST_LIST_ID is required'),
-  KLAVIYO_MARKETING_LIST_ID: z.string().min(1, 'KLAVIYO_MARKETING_LIST_ID is required'),
+  KLAVIYO_DROP_LIST_ID:      z.string().optional(),
+  KLAVIYO_WAITLIST_LIST_ID:  z.string().optional(),
+  KLAVIYO_MARKETING_LIST_ID: z.string().optional(),
 })
 
 type Env = z.infer<typeof EnvSchema>

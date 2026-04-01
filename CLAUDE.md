@@ -88,8 +88,9 @@ Phone + 6-digit PIN via Supabase Auth (no email/password).
 
 - **Sign-up flow**: `signUp` → Supabase sends OTP SMS → `verifyOtp` → session active
 - **Sign-in flow**: `signInWithPassword(phone, pin)` → session active
-- **Session storage**: `SecureStore` (app only). Website has no auth wired yet.
-- **Navigation**: `sign-in` and `verify-phone` screens are `presentation: 'modal'`. After OTP verification, call `router.dismissAll()` then `router.replace('/(tabs)/profile')` to clear both modals and land on profile.
+- **Session storage**: `SecureStore` (app). Website uses Supabase's default browser `localStorage` storage.
+- **Website auth**: `src/context/AuthContext.tsx` + `src/lib/supabase/client.ts`. Pages: `/sign-in`, `/verify-phone`, `/profile`. Sign-in and verify-phone are full-page routes (not modals). After OTP verification, `router.replace('/profile')`.
+- **App navigation**: `sign-in` and `verify-phone` screens are `presentation: 'modal'`. After OTP verification, call `router.dismissAll()` then `router.replace('/(tabs)/profile')` to clear both modals and land on profile.
 
 ## App Navigation Patterns
 

@@ -3,6 +3,7 @@ const CACHE_NAME = 'bead-bar-v1'
 // Static assets that rarely change — cache first
 const CACHE_FIRST_PATTERNS = [
   /\/_next\/static\//,
+  /\/_next\/image/,
   /\/fonts\//,
   /\/icons\//,
   /\/images\//,
@@ -58,7 +59,7 @@ self.addEventListener('fetch', event => {
           const clone = res.clone()
           caches.open(CACHE_NAME).then(cache => cache.put(request, clone))
           return res
-        })
+        }).catch(() => new Response('Offline', { status: 503, headers: { 'Content-Type': 'text/plain' } }))
       )
     )
     return
@@ -72,7 +73,11 @@ self.addEventListener('fetch', event => {
         caches.open(CACHE_NAME).then(cache => cache.put(request, clone))
         return res
       })
-      .catch(() => caches.match(request))
+      .catch(() =>
+        caches.match(request).then(
+          cached => cached ?? new Response('Offline', { status: 503, headers: { 'Content-Type': 'text/plain' } })
+        )
+      )
   )
 })
 

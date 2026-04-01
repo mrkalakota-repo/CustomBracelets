@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { View, Text, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router, useLocalSearchParams } from 'expo-router'
@@ -17,6 +17,15 @@ export default function VerifyPhoneScreen() {
   const [cooldown, setCooldown] = useState(0)
   const inputRef = useRef<TextInput>(null)
   const cooldownRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  useEffect(() => {
+    const timer = setTimeout(() => inputRef.current?.focus(), 150)
+    return () => clearTimeout(timer)
+  }, [])
+
+  useEffect(() => {
+    return () => { if (cooldownRef.current) clearInterval(cooldownRef.current) }
+  }, [])
 
   function startCooldown() {
     setCooldown(RESEND_COOLDOWN_S)
@@ -115,8 +124,7 @@ export default function VerifyPhoneScreen() {
             onChangeText={handleOtpChange}
             keyboardType="number-pad"
             maxLength={OTP_LENGTH}
-            autoFocus
-            style={{ position: 'absolute', opacity: 0, height: 0 }}
+            style={{ position: 'absolute', opacity: 0, width: 1, height: 1, top: -100 }}
           />
 
           <TouchableOpacity

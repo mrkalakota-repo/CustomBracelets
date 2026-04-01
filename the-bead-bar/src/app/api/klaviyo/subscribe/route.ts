@@ -24,12 +24,15 @@ export async function POST(req: Request) {
     }
 
     const { email, type, dropId } = parsed.data
-    const listIds: Record<string, string> = {
+    const listIds: Record<string, string | undefined> = {
       drop:      env.KLAVIYO_DROP_LIST_ID,
       waitlist:  env.KLAVIYO_WAITLIST_LIST_ID,
       marketing: env.KLAVIYO_MARKETING_LIST_ID,
     }
     const listId = listIds[type]
+    if (!listId) {
+      return NextResponse.json({ error: `List ID for "${type}" is not configured` }, { status: 503 })
+    }
     await subscribeToList({ email, listId, source: dropId ? `drop:${dropId}` : 'website' })
 
     return NextResponse.json({ success: true })

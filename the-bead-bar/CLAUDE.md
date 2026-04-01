@@ -31,14 +31,16 @@ npx playwright test e2e/builder-flow.spec.ts
 ```
 STRIPE_SECRET_KEY=sk_...
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_...
+NEXT_PUBLIC_SUPABASE_URL=https://<project>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_...
 KLAVIYO_API_KEY=pk_...
-# Optional — Klaviyo list IDs
+# Optional — Klaviyo list IDs (API returns 503 if called without these)
 KLAVIYO_DROP_LIST_ID=...
 KLAVIYO_WAITLIST_LIST_ID=...
 KLAVIYO_MARKETING_LIST_ID=...
 ```
 
-Validated lazily at first request via `src/lib/env.ts` (Zod schema, Proxy-based). Missing required keys throw a clear error at runtime, not at build time.
+Server-side secrets (`STRIPE_SECRET_KEY`, `KLAVIYO_API_KEY`) are validated lazily at first request via `src/lib/env.ts` (Zod schema, Proxy-based). Missing required keys throw a clear error at runtime, not at build time. `NEXT_PUBLIC_*` vars are inlined at build time by Next.js.
 
 ## Architecture
 
@@ -53,6 +55,8 @@ Validated lazily at first request via `src/lib/env.ts` (Zod schema, Proxy-based)
 | Lib | `src/lib/` | Pure business logic with no React dependencies. Tested independently. |
 | API routes | `src/app/api/` | Next.js route handlers. One file per endpoint. |
 | Context | `src/context/CartContext.tsx` | Global cart state via React Context + useReducer. |
+| Auth context | `src/context/AuthContext.tsx` | Supabase phone+PIN auth. Wraps entire app in `layout.tsx`. |
+| Supabase client | `src/lib/supabase/client.ts` | Browser Supabase client (uses `NEXT_PUBLIC_*` vars, localStorage session). |
 
 ### Key domain models
 
@@ -121,8 +125,11 @@ Use `next/image` with `fill` + a `relative`-positioned container for all product
 ### PWA
 
 - `public/manifest.json` — name, icons (192, 512), shortcuts to `/builder` and `/shop`.
-- `public/sw.js` — Cache First for static assets, Network Only for API/checkout/drops, Network First for product pages. Also handles Web Push.
+- `public/sw.js` — Cache First for static assets + `/_next/image`, Network Only for API/checkout/drops, Network First for product pages. Also handles Web Push.
 - `src/components/PwaInit.tsx` — client component that registers the service worker.
+- **PWA requires a production build** — `npm run build && npm run start`. The service worker does not activate in `npm run dev`.
+- **Service worker rule**: `FetchEvent.respondWith` must always receive a `Response` — never `undefined`. Safari crashes hard on null; Chrome silently ignores it. Always provide a fallback: `cached ?? new Response('Offline', { status: 503 })`.
+- **`useSearchParams` requires `<Suspense>`** — any page component calling `useSearchParams()` must be split into an inner component wrapped in `<Suspense>` in the page export, otherwise the build fails with a prerender error.
 
 ### Error handling
 

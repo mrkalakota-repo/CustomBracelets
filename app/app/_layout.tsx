@@ -1,12 +1,11 @@
 import '../src/styles/global.css'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { StripeProvider } from '@stripe/stripe-react-native'
-import * as Font from 'expo-font'
+import { useFonts } from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
-import { useEffect, useState } from 'react'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { AuthProvider } from '../src/context/AuthContext'
 
@@ -15,19 +14,13 @@ SplashScreen.preventAutoHideAsync()
 const STRIPE_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? ''
 
 export default function RootLayout() {
-  const [fontsLoaded, setFontsLoaded] = useState(false)
+  const [fontsLoaded] = useFonts({
+    ...Ionicons.font,
+  })
 
   useEffect(() => {
-    Font.loadAsync({
-      ...Ionicons.font,
-    }).then(() => {
-      setFontsLoaded(true)
-      SplashScreen.hideAsync()
-    }).catch(() => {
-      setFontsLoaded(true)
-      SplashScreen.hideAsync()
-    })
-  }, [])
+    if (fontsLoaded) SplashScreen.hideAsync()
+  }, [fontsLoaded])
 
   if (!fontsLoaded) return null
 
