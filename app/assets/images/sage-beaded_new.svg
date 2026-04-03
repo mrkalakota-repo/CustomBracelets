@@ -1,0 +1,58 @@
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Linen Fabric Texture -->
+    <filter id="linenTexture" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="5" result="noise" />
+      <feDiffuseLighting in="noise" lighting-color="#F5F0E8" surfaceScale="2">
+        <feDistantLight azimuth="45" elevation="60" />
+      </feDiffuseLighting>
+    </filter>
+
+    <!-- Matte Sage Bead Shading (Silicone look) -->
+    <radialGradient id="matteSage" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#AEC9AB" />
+      <stop offset="70%" stop-color="#8FAF8A" />
+      <stop offset="100%" stop-color="#7A9A75" />
+    </radialGradient>
+
+    <!-- Very soft ambient shadow -->
+    <filter id="softAmbient" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="12" />
+      <feOffset dx="2" dy="10" result="offsetblur" />
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.18" />
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background Linen -->
+  <rect width="400" height="400" fill="#F5F0E8" />
+  <rect width="400" height="400" filter="url(#linenTexture)" opacity="0.4" />
+
+  <!-- Bracelet -->
+  <g filter="url(#softAmbient)">
+    <g transform="translate(200,200) rotate(10)">
+      <!-- Rendered in a natural, organic oval -->
+      <circle cx="0" cy="-125" r="18" fill="url(#matteSage)" />
+      <circle cx="48" cy="-115" r="18" fill="url(#matteSage)" />
+      <circle cx="90" cy="-88" r="18" fill="url(#matteSage)" />
+      <circle cx="118" cy="-45" r="18" fill="url(#matteSage)" />
+      <circle cx="128" cy="5" r="18" fill="url(#matteSage)" />
+      <circle cx="115" cy="55" r="18" fill="url(#matteSage)" />
+      <circle cx="85" cy="98" r="18" fill="url(#matteSage)" />
+      <circle cx="42" cy="122" r="18" fill="url(#matteSage)" />
+      <circle cx="-8" cy="130" r="18" fill="url(#matteSage)" />
+      <circle cx="-55" cy="120" r="18" fill="url(#matteSage)" />
+      <circle cx="-95" cy="88" r="18" fill="url(#matteSage)" />
+      <circle cx="-120" cy="45" r="18" fill="url(#matteSage)" />
+      <circle cx="-125" cy="-5" r="18" fill="url(#matteSage)" />
+      <circle cx="-112" cy="-55" r="18" fill="url(#matteSage)" />
+      <circle cx="-85" cy="-92" r="18" fill="url(#matteSage)" />
+      <circle cx="-45" cy="-118" r="18" fill="url(#matteSage)" />
+    </g>
+  </g>
+</svg>

@@ -136,7 +136,15 @@ Deno.serve(async (req: Request) => {
       amount,
       currency: 'usd',
       automatic_payment_methods: { enabled: true },
-      metadata: { itemCount: String(validItems.length) },
+      metadata: {
+        itemCount: String(validItems.length),
+        cartItems: JSON.stringify(validItems.map(item => ({
+          baseStyle: item.baseStyle,
+          quantity:  item.quantity,
+          addOns:    item.addOns ?? {},
+          price:     calculatePrice(item.baseStyle, item.addOns ?? {}),
+        }))),
+      },
     })
 
     return json({ clientSecret: paymentIntent.client_secret }, 200)

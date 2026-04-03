@@ -1,0 +1,60 @@
+<svg viewBox="0 0 2048 2048" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Brand Colors -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F5F0E8" />
+      <stop offset="100%" stop-color="#E5E0D8" />
+    </linearGradient>
+
+    <linearGradient id="goldLuster" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FDE68A" />
+      <stop offset="50%" stop-color="#D97706" />
+      <stop offset="100%" stop-color="#B45309" />
+    </linearGradient>
+
+    <!-- Soft Ambient Shadow -->
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="25" />
+      <feOffset dx="10" dy="20" result="offsetblur" />
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.15" />
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background Layer (Full Screen for Splash) -->
+  <rect width="2048" height="2048" fill="url(#bgGrad)" />
+
+  <!-- Centered Logo Element -->
+  <g filter="url(#softShadow)" transform="translate(1024, 1024)">
+    <!-- Matte Sage Beads -->
+    <circle cx="0" cy="-350" r="55" fill="#8FAF8A" />
+    <circle cx="137" cy="-325" r="55" fill="#8FAF8A" />
+    <circle cx="250" cy="-250" r="55" fill="#8FAF8A" />
+    <circle cx="325" cy="-137" r="55" fill="#8FAF8A" />
+    <circle cx="350" cy="0" r="55" fill="#8FAF8A" />
+    <circle cx="325" cy="137" r="55" fill="#8FAF8A" />
+    <circle cx="250" cy="250" r="55" fill="#8FAF8A" />
+    <circle cx="137" cy="325" r="55" fill="#8FAF8A" />
+    <circle cx="0" cy="350" r="55" fill="#8FAF8A" />
+    <circle cx="-137" cy="325" r="55" fill="#8FAF8A" />
+    <circle cx="-250" cy="250" r="55" fill="#8FAF8A" />
+    <circle cx="-325" cy="137" r="55" fill="#8FAF8A" />
+    <circle cx="-350" cy="0" r="55" fill="#8FAF8A" />
+    <circle cx="-325" cy="-137" r="55" fill="#8FAF8A" />
+    <circle cx="-250" cy="-250" r="55" fill="#8FAF8A" />
+    <circle cx="-137" cy="-325" r="55" fill="#8FAF8A" />
+
+    <!-- Center Charm (Heart) -->
+    <path d="M0,55 L-45,0 A25,25 0 0,1 0,-25 A25,25 0 0,1 45,0 Z"
+          transform="scale(3.2)"
+          fill="url(#goldLuster)" />
+
+    <!-- Optional Typography -->
+    <text y="550" text-anchor="middle" font-family="Serif" font-size="120" fill="#374151" font-weight="bold" letter-spacing="15">THE BEAD BAR</text>
+  </defs>
+</svg>

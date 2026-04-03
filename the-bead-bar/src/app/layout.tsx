@@ -6,6 +6,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { CartErrorBoundary } from "@/components/CartErrorBoundary";
 import { PwaInit } from "@/components/PwaInit";
 import { Nav } from "@/components/Nav";
+import { CookieBanner } from "@/components/CookieBanner/CookieBanner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,6 +43,7 @@ export default function RootLayout({
               <PwaInit />
               <Nav />
               {children}
+              <CookieBanner />
             </CartProvider>
           </AuthProvider>
         </CartErrorBoundary>

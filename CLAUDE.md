@@ -51,8 +51,10 @@ cd ios && pod install --no-repo-update   # after adding native deps
 supabase link --project-ref <project-ref>          # one-time link
 supabase functions deploy checkout                  # deploy a function
 supabase functions deploy klaviyo-subscribe         # deploy klaviyo function
+supabase functions deploy stripe-webhook            # deploy webhook handler
 supabase secrets set STRIPE_SECRET_KEY=sk_test_...  # set secrets (never in code)
 supabase functions serve checkout                   # local dev
+supabase db push                                    # apply pending migrations
 ```
 
 ## Backend Architecture
@@ -69,6 +71,13 @@ The app **never** calls the website's API routes for payments — it uses the Su
 The app's checkout screen reads `EXPO_PUBLIC_API_BASE_URL` as its base URL. In `.env.local` this is set to the Supabase functions base URL (`https://<project>.supabase.co/functions/v1`), so the checkout call becomes `.../functions/v1/checkout` — NOT `.../functions/v1/api/checkout`.
 
 Klaviyo email signups from the app call the `klaviyo-subscribe` edge function (same base URL). Order tracking (`trackOrder`) is called from the website's order-confirmation page after a successful Stripe redirect.
+
+**Edge Functions:**
+- `checkout` — creates Stripe PaymentIntent, recalculates prices server-side
+- `klaviyo-subscribe` — subscribes email to a Klaviyo drop list
+- `stripe-webhook` — handles `payment_intent.succeeded`: creates `orders` + `order_items` rows in Supabase, decrements inventory via `decrement_inventory` RPC
+
+**Database migrations** live in `supabase/migrations/`. Apply with `supabase db push`. Migration files are prefixed with a timestamp; do not edit existing migrations — add new ones.
 
 ## Shared Business Logic
 

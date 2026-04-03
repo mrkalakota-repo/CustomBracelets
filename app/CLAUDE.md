@@ -79,7 +79,7 @@ NativeWind v4 — Tailwind class names on React Native components.
 
 ### Payments
 
-`@stripe/stripe-react-native` configured via `app.json` plugin. `StripeProvider` in `app/_layout.tsx` reads `EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY`. Checkout screen has a placeholder — real integration should call `../the-bead-bar/src/app/api/` routes.
+`@stripe/stripe-react-native` configured via `app.json` plugin. `StripeProvider` in `app/_layout.tsx` reads `EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY`. The checkout screen calls `${EXPO_PUBLIC_API_BASE_URL}/checkout` — the Supabase Edge Function, **not** the website's API routes. The base URL already ends in `/functions/v1`, so the path must be just `/checkout` (not `/api/checkout`).
 
 ### Key Constraints
 

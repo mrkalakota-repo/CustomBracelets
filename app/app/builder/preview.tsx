@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Text, TouchableOpacity, ScrollView, Share } from 'react-native'
 import { router } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -6,7 +6,7 @@ import { useBuilderStore } from '../../src/store/builder'
 import { useCartStore } from '../../src/store/cart'
 import { StepIndicator } from '../../src/components/ui/StepIndicator'
 import { Button } from '../../src/components/ui/Button'
-import { calculatePrice } from '../../src/lib/builder/pricing'
+import { calculatePrice, calculatePriceLocal } from '../../src/lib/builder/pricing'
 import type { AddOns } from '../../src/lib/builder/pricing'
 
 export default function BuilderPreview() {
@@ -14,7 +14,17 @@ export default function BuilderPreview() {
   const addToCart = useCartStore(s => s.addCustom)
 
   const addOns = (builder.addOns as AddOns) ?? {}
-  const price = builder.baseStyle ? calculatePrice(builder.baseStyle, addOns) : 0
+  const [price, setPrice] = useState(builder.baseStyle ? calculatePriceLocal(builder.baseStyle, addOns) : 0)
+
+  useEffect(() => {
+    async function updatePrice() {
+      if (builder.baseStyle) {
+        const serverPrice = await calculatePrice(builder.baseStyle, addOns)
+        setPrice(serverPrice)
+      }
+    }
+    updatePrice()
+  }, [builder.baseStyle, addOns])
 
   function handleAddToCart() {
     if (!builder.baseStyle) return

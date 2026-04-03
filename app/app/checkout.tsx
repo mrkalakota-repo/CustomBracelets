@@ -96,7 +96,7 @@ export default function CheckoutScreen() {
         addOns:   item.addOns ?? {},
       }))
 
-      const res = await fetch(`${API_BASE}/api/checkout`, {
+      const res = await fetch(`${API_BASE}/checkout`, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({ items: apiItems }),

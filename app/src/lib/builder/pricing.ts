@@ -1,3 +1,4 @@
+import { supabase } from '../supabase/client'
 import type { BaseStyle } from './compatibility'
 
 export const BASE_PRICES: Record<BaseStyle, number> = {
@@ -23,7 +24,33 @@ export interface AddOns {
   bffDuo?:   boolean
 }
 
-export function calculatePrice(base: BaseStyle, addOns: AddOns): number {
+/**
+ * Syncs with the centralized Supabase calculate_bracelet_price function.
+ * Use this as the single source of truth for final pricing.
+ */
+export async function calculatePrice(base: BaseStyle, addOns: AddOns): Promise<number> {
+  const { data, error } = await supabase.rpc('calculate_bracelet_price', {
+    base_style:    base,
+    has_charm:     !!addOns.charm,
+    has_text:      !!addOns.text,
+    has_gift_wrap: !!addOns.giftWrap,
+    is_rush:       !!addOns.rush,
+    is_bff_duo:    !!addOns.bffDuo,
+  })
+
+  if (error) {
+    console.error('Error calculating price from server:', error)
+    // Fallback to local calculation if server is down (offline support)
+    return calculatePriceLocal(base, addOns)
+  }
+
+  return data ?? calculatePriceLocal(base, addOns)
+}
+
+/**
+ * Local fallback for instant UI updates or offline mode.
+ */
+export function calculatePriceLocal(base: BaseStyle, addOns: AddOns): number {
   let price = BASE_PRICES[base]
   if (addOns.charm)    price += ADDON_PRICES.charm
   if (addOns.text)     price += ADDON_PRICES.text

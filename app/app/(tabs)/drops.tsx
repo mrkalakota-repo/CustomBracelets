@@ -47,6 +47,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 export default function DropsScreen() {
   const [email, setEmail] = useState('')
   const [ageConfirmed, setAgeConfirmed] = useState(false)
+  const [marketingConsent, setMarketingConsent] = useState(false)
   const [loading, setLoading] = useState(false)
   const itemCount = useCartStore(s => s.itemCount())
 
@@ -55,6 +56,7 @@ export default function DropsScreen() {
   async function handleNotifyMe() {
     if (!email || !EMAIL_RE.test(email)) return Alert.alert('Invalid email', 'Please enter a valid email address.')
     if (!ageConfirmed) return Alert.alert('Age required', 'Please confirm you are 13 or older.')
+    if (!marketingConsent) return Alert.alert('Consent required', 'Please agree to receive marketing emails.')
     if (loading) return
 
     setLoading(true)
@@ -69,6 +71,7 @@ export default function DropsScreen() {
       Alert.alert('You\'re on the list! 🌸', `We'll notify ${email} when ${activeDrop?.name} drops.`)
       setEmail('')
       setAgeConfirmed(false)
+      setMarketingConsent(false)
     } catch {
       Alert.alert('Something went wrong', 'Please try again.')
     } finally {
@@ -139,12 +142,22 @@ export default function DropsScreen() {
 
                 <TouchableOpacity
                   onPress={() => setAgeConfirmed(!ageConfirmed)}
-                  className="flex-row items-center gap-2 mb-4"
+                  className="flex-row items-center gap-2 mb-2"
                 >
                   <View className={`w-5 h-5 rounded border-2 items-center justify-center ${ageConfirmed ? 'bg-sage border-sage' : 'border-gray-300'}`}>
                     {ageConfirmed && <Text className="text-white text-xs">✓</Text>}
                   </View>
                   <Text className="text-gray-500 text-sm">I confirm I am 13 or older</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => setMarketingConsent(!marketingConsent)}
+                  className="flex-row items-center gap-2 mb-4"
+                >
+                  <View className={`w-5 h-5 rounded border-2 items-center justify-center ${marketingConsent ? 'bg-sage border-sage' : 'border-gray-300'}`}>
+                    {marketingConsent && <Text className="text-white text-xs">✓</Text>}
+                  </View>
+                  <Text className="text-gray-500 text-sm flex-1">I agree to receive marketing emails from The Bead Bar</Text>
                 </TouchableOpacity>
 
                 <Button label={loading ? 'Saving…' : 'Notify Me 🌸'} onPress={handleNotifyMe} loading={loading} fullWidth />

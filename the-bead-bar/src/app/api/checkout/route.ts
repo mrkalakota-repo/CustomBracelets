@@ -53,7 +53,15 @@ export async function POST(req: Request) {
       amount,
       currency: 'usd',
       automatic_payment_methods: { enabled: true },
-      metadata: { itemCount: String(items.length) },
+      metadata: {
+        itemCount: String(items.length),
+        cartItems: JSON.stringify(items.map(item => ({
+          baseStyle: item.baseStyle,
+          quantity:  item.quantity,
+          addOns:    item.addOns ?? {},
+          price:     calculatePrice(item.baseStyle as keyof typeof BASE_PRICES, item.addOns ?? {}),
+        }))),
+      },
     })
 
     return NextResponse.json({ clientSecret: paymentIntent.client_secret })
