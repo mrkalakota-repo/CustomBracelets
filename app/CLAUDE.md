@@ -36,9 +36,10 @@ No test runner is configured yet. When adding tests, use Jest with `jest-expo`.
 Create `.env.local` in the project root:
 ```
 EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+EXPO_PUBLIC_API_BASE_URL=https://<project>.supabase.co/functions/v1
 ```
 
-All `EXPO_PUBLIC_` variables are inlined at build time and safe to read client-side.
+`EXPO_PUBLIC_API_BASE_URL` is the Supabase Edge Functions base URL. The checkout screen appends `/checkout` to it — do **not** include `/api` in the path. All `EXPO_PUBLIC_` variables are inlined at build time and safe to read client-side.
 
 ## Architecture
 
@@ -52,11 +53,13 @@ All `EXPO_PUBLIC_` variables are inlined at build time and safe to read client-s
 - `app/cart.tsx`, `app/checkout.tsx`, `app/order-confirmation.tsx` — checkout flow
 - `app/_layout.tsx` — root layout; wraps everything in `StripeProvider` + `SafeAreaProvider`
 
-The builder opens as a modal (`presentation: 'modal'`). Use `router.dismissAll()` to close it, then navigate away. Tab routes must use full paths e.g. `/(tabs)/drops` not `/drops`.
+The builder opens as a modal (`presentation: 'modal'`). Use `router.dismissAll()` to close it, then navigate away.
+
+**Tab navigation rule**: Tab screens must always use full paths — `/(tabs)/shop`, `/(tabs)/drops`, etc. Using `/shop` from inside a tab pushes to the root Stack, not within tabs, and falls through to `+not-found`. Non-tab screens (`/cart`, `/product/[id]`, `/builder`, etc.) use their root path as normal.
 
 ### State (`src/store/`)
 
-- **`cart.ts`** — `CartItem[]`, `addProduct()`, `addCustom()`, `removeItem()`, `total()`, `itemCount()`. Supports both catalog products and custom-built bracelets.
+- **`cart.ts`** — `CartItem[]`, `addProduct()`, `addCustom()`, `removeItem()`, `total()`, `itemCount()`. Persisted to AsyncStorage under key `chic-charm-cart` (items only, not derived state). Supports both catalog products and custom-built bracelets.
 - **`builder.ts`** — 5-step state (`baseStyle → primaryColor → accentPattern → addOns`). `setBaseStyle()` resets all downstream steps via `resetFromStep()`. `currentStep()` derives current step. `charm` base skips step 3 (no patterns).
 
 ### Shared Logic (`src/lib/`)

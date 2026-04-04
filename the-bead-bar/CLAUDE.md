@@ -122,6 +122,20 @@ Use these classes rather than one-off Tailwind values for brand consistency.
 
 Use `next/image` with `fill` + a `relative`-positioned container for all product and drop images. Always include a `sizes` attribute. Raw `<img>` tags are not permitted.
 
+### Dynamic route pages
+
+In Next.js 15+, `params` in server component page functions is a **Promise** — always `await` it before accessing properties:
+
+```ts
+// app/shop/[id]/page.tsx
+export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  // ...
+}
+```
+
+This applies to every `app/**/[param]/page.tsx`. Using `params.id` synchronously throws at runtime.
+
 ### PWA
 
 - `public/manifest.json` — name, icons (192, 512), shortcuts to `/builder` and `/shop`.

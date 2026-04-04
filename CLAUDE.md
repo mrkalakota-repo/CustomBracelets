@@ -53,9 +53,13 @@ supabase functions deploy checkout                  # deploy a function
 supabase functions deploy klaviyo-subscribe         # deploy klaviyo function
 supabase functions deploy stripe-webhook            # deploy webhook handler
 supabase secrets set STRIPE_SECRET_KEY=sk_test_...  # set secrets (never in code)
+supabase secrets set UPSTASH_REDIS_URL=https://...  # distributed rate limiting
+supabase secrets set UPSTASH_REDIS_TOKEN=...        # distributed rate limiting
 supabase functions serve checkout                   # local dev
 supabase db push                                    # apply pending migrations
 ```
+
+**Upstash Redis** is used by the `checkout` edge function for distributed rate limiting (replaces in-memory Map which resets per isolate). If `UPSTASH_REDIS_URL` / `UPSTASH_REDIS_TOKEN` are not set, the function logs a warning and allows the request — graceful degradation.
 
 ## Backend Architecture
 
