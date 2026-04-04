@@ -16,6 +16,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
 
+  if (!env.KLAVIYO_API_KEY) {
+    return NextResponse.json({ error: 'Klaviyo not configured' }, { status: 503 })
+  }
+
   try {
     const body   = await req.json()
     const parsed = SubscribeBodySchema.safeParse(body)

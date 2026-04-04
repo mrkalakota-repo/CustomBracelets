@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { trackOrder } from '@/lib/klaviyo/client'
 import { rateLimit } from '@/lib/rateLimit'
+import { env } from '@/lib/env'
 const OrderBodySchema = z.object({
   email:   z.string().email('Valid email required'),
   orderId: z.string().min(1, 'orderId required'),
@@ -17,6 +18,10 @@ export async function POST(req: Request) {
   const ip = req.headers.get('x-forwarded-for') ?? 'unknown'
   if (!rateLimit(`order:${ip}`, 10, 60_000)) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+  }
+
+  if (!env.KLAVIYO_API_KEY) {
+    return NextResponse.json({ error: 'Klaviyo not configured' }, { status: 503 })
   }
 
   try {
