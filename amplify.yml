@@ -1,0 +1,17 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - cd the-bead-bar
+        - npm ci
+    build:
+      commands:
+        - npm run build
+  artifacts:
+    baseDirectory: the-bead-bar/.next
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - the-bead-bar/node_modules/**/*
