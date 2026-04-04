@@ -57,17 +57,48 @@ function validateItem(item: unknown): item is CartItem {
   return true
 }
 
-// ── Rate limiting (in-memory, per-isolate) ────────────────────────────────────
+// ── Rate limiting (distributed via Upstash Redis) ─────────────────────────────
+//
+// Uses Upstash Redis so the limit is enforced across all Edge Function isolates.
+// Requires two Supabase secrets:
+//   supabase secrets set UPSTASH_REDIS_URL=https://...
+//   supabase secrets set UPSTASH_REDIS_TOKEN=...
+//
+// If the secrets are absent the limiter degrades gracefully (allows the request)
+// and logs a warning — this matches the previous in-memory behaviour on cold
+// starts while making the missing-config observable in logs.
 
-const requestLog = new Map<string, number[]>()
+const UPSTASH_URL   = Deno.env.get('UPSTASH_REDIS_URL')
+const UPSTASH_TOKEN = Deno.env.get('UPSTASH_REDIS_TOKEN')
 
-function rateLimit(key: string, max: number, windowMs: number): boolean {
-  const now  = Date.now()
-  const hits = (requestLog.get(key) ?? []).filter(t => now - t < windowMs)
-  if (hits.length >= max) return false
-  hits.push(now)
-  requestLog.set(key, hits)
-  return true
+async function rateLimit(key: string, max: number, windowSec: number): Promise<boolean> {
+  if (!UPSTASH_URL || !UPSTASH_TOKEN) {
+    console.warn('[checkout] Upstash not configured — rate limiting disabled')
+    return true
+  }
+  try {
+    // INCR + EXPIRE using Upstash REST pipeline for a single round-trip
+    const res = await fetch(`${UPSTASH_URL}/pipeline`, {
+      method:  'POST',
+      headers: {
+        Authorization:  `Bearer ${UPSTASH_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify([
+        ['INCR', key],
+        ['EXPIRE', key, String(windowSec)],
+      ]),
+    })
+    if (!res.ok) {
+      console.warn('[checkout] Upstash pipeline failed, allowing request:', res.status)
+      return true
+    }
+    const [[, count]] = await res.json() as [[string, number], unknown]
+    return count <= max
+  } catch (err) {
+    console.warn('[checkout] Rate-limit check threw, allowing request:', err)
+    return true
+  }
 }
 
 // ── Handler ───────────────────────────────────────────────────────────────────
@@ -89,7 +120,7 @@ Deno.serve(async (req: Request) => {
   }
 
   const ip = req.headers.get('x-forwarded-for') ?? 'unknown'
-  if (!rateLimit(`checkout:${ip}`, 10, 60_000)) {
+  if (!await rateLimit(`checkout:${ip}`, 10, 60)) {
     return json({ error: 'Too many requests' }, 429)
   }
 

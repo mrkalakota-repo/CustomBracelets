@@ -19,11 +19,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title:       "The Bead Bar",
+  title:       "Chic Charm Co.",
   description: "Custom bracelets, seasonal drops & BFF sets.",
   manifest:    "/manifest.json",
   themeColor:  "#8FAF8A",
-  appleWebApp: { capable: true, statusBarStyle: "default", title: "The Bead Bar" },
+  appleWebApp: { capable: true, statusBarStyle: "default", title: "Chic Charm Co." },
 };
 
 export default function RootLayout({

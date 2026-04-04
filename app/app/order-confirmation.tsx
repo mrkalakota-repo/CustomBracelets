@@ -1,10 +1,21 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { View, Text, TouchableOpacity } from 'react-native'
 import { router } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Button } from '../src/components/ui/Button'
+import { useCartStore } from '../src/store/cart'
 
 export default function OrderConfirmationScreen() {
+  const clearCart = useCartStore(s => s.clearCart)
+
+  // Clear cart here — after the user has successfully landed on this screen —
+  // rather than in checkout.tsx immediately after presentPaymentSheet(). This
+  // ensures the cart survives any crash or navigation failure between payment
+  // confirmation and this screen.
+  useEffect(() => {
+    clearCart()
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <SafeAreaView className="flex-1 bg-cream items-center justify-center px-6">
       <Text className="text-7xl mb-5">📦</Text>

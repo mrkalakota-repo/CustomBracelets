@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bead-bar-v1'
+const CACHE_NAME = 'chic-charm-v1'
 
 // Static assets that rarely change — cache first
 const CACHE_FIRST_PATTERNS = [
@@ -89,7 +89,7 @@ self.addEventListener('fetch', event => {
 self.addEventListener('push', event => {
   const data = event.data?.json() ?? {}
   event.waitUntil(
-    self.registration.showNotification(data.title ?? 'The Bead Bar', {
+    self.registration.showNotification(data.title ?? 'Chic Charm Co.', {
       body:  data.body  ?? 'Something new just dropped!',
       icon:  '/icons/icon-192.png',
       badge: '/icons/icon-96.png',

@@ -17,7 +17,7 @@ const SECTIONS = [
   {
     title: 'How to start a return',
     icon: '📧',
-    body: 'Email hello@thebeadbar.com with your order number and reason for return. We\'ll send a prepaid return label within one business day.',
+    body: 'Email hello@chiccharmco.com with your order number and reason for return. We\'ll send a prepaid return label within one business day.',
   },
   {
     title: 'Refunds',
@@ -61,7 +61,7 @@ export default function ReturnsScreen() {
 
         <View className="mt-6 bg-sage/10 rounded-2xl p-4">
           <Text className="text-sage-dark text-sm font-medium text-center">Start a return</Text>
-          <Text className="text-gray-400 text-xs text-center mt-1">hello@thebeadbar.com</Text>
+          <Text className="text-gray-400 text-xs text-center mt-1">hello@chiccharmco.com</Text>
         </View>
       </ScrollView>
     </SafeAreaView>

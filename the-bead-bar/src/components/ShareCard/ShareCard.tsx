@@ -121,7 +121,7 @@ export function ShareCard({ selection, brandUrl, onShare }: ShareCardProps) {
 
         {/* Brand name */}
         <p className="text-xs font-semibold tracking-widest uppercase text-text-mid">
-          The Bead Bar
+          Chic Charm Co.
         </p>
 
         {/* Design summary */}

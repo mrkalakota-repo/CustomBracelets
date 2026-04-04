@@ -45,7 +45,7 @@ export default function BuilderPreview() {
   async function handleShare() {
     try {
       await Share.share({
-        message: `I just built a custom ${builder.baseStyle} bracelet on The Bead Bar! Check it out → thebeadbar.com`,
+        message: `I just built a custom ${builder.baseStyle} bracelet on Chic Charm Co.! Check it out → chiccharmco.com`,
         title:   'My Custom Bracelet',
       })
     } catch {}

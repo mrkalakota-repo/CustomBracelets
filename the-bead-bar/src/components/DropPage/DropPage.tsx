@@ -143,7 +143,7 @@ function NotifyMeForm({ onSubmit }: { onSubmit?: (email: string) => Promise<void
           onChange={e => setMarketingConsent(e.target.checked)}
           className="mt-0.5 accent-[var(--sage)]"
         />
-        I agree to receive marketing emails from The Bead Bar. You can unsubscribe at any time.
+        I agree to receive marketing emails from Chic Charm Co.. You can unsubscribe at any time.
       </label>
       {error && <p role="alert" className="text-xs text-red-500">{error}</p>}
       <button
@@ -227,7 +227,7 @@ function WaitlistForm({ onSubmit }: { onSubmit?: (email: string) => Promise<void
           onChange={e => setMarketingConsent(e.target.checked)}
           className="mt-0.5 accent-[var(--sage)]"
         />
-        I agree to receive marketing emails from The Bead Bar. You can unsubscribe at any time.
+        I agree to receive marketing emails from Chic Charm Co.. You can unsubscribe at any time.
       </label>
       {error && <p role="alert" className="text-xs text-red-500">{error}</p>}
       <button

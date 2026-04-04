@@ -38,7 +38,7 @@ function AgeGate({ onConfirm }: { onConfirm: () => void }) {
         <Text className="text-5xl mb-4">📿</Text>
         <Text className="text-gray-800 text-xl font-bold text-center mb-2">Before you check out</Text>
         <Text className="text-gray-400 text-sm text-center mb-8">
-          The Bead Bar is designed for teens 13 and up. Please confirm your age to continue.
+          Chic Charm Co. is designed for teens 13 and up. Please confirm your age to continue.
         </Text>
 
         <TouchableOpacity
@@ -67,7 +67,7 @@ function AgeGate({ onConfirm }: { onConfirm: () => void }) {
 // ── Main Checkout ─────────────────────────────────────────────────────────────
 
 export default function CheckoutScreen() {
-  const { items, total, clearCart } = useCartStore()
+  const { items, total } = useCartStore()
   const { initPaymentSheet, presentPaymentSheet } = useStripe()
 
   const cartTotal    = total()
@@ -111,10 +111,10 @@ export default function CheckoutScreen() {
 
       const { error } = await initPaymentSheet({
         paymentIntentClientSecret: clientSecret,
-        merchantDisplayName:       'The Bead Bar',
+        merchantDisplayName:       'Chic Charm Co.',
         applePay:   { merchantCountryCode: 'US' },
         googlePay:  { merchantCountryCode: 'US', testEnv: !process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY?.startsWith('pk_live') },
-        returnURL:  'thebeadbar://checkout',
+        returnURL:  'chiccharmco://checkout',
         style:      'alwaysLight',
       })
 
@@ -139,13 +139,20 @@ export default function CheckoutScreen() {
     setLoading(false)
 
     if (error) {
-      if (error.code !== 'Canceled') {
+      if (error.code === 'Canceled') {
+        // User dismissed the sheet — the PaymentIntent is consumed. Reset so a
+        // fresh intent is created before the next attempt.
+        setPaymentReady(false)
+        initializePayment()
+      } else {
         Alert.alert('Payment failed', error.message)
       }
       return
     }
 
-    clearCart()
+    // Do NOT clearCart() here. The cart is cleared on the order-confirmation
+    // screen so that if something goes wrong before the user lands there
+    // (crash, nav failure) the cart is still intact and recoverable.
     router.replace('/order-confirmation')
   }
 

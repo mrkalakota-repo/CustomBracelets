@@ -171,7 +171,10 @@ Deno.serve(async (req) => {
     console.log(`[stripe-webhook] Order ${order.id} created successfully`)
 
     // ── Klaviyo order tracking (best-effort) ──────────────────────────────────
-    const email = pi.receipt_email ?? (pi.customer ? null : null)
+    // pi.receipt_email is null for Apple Pay / Google Pay. Fall back to the
+    // charge's billing_details.email which is populated by those payment methods.
+    const chargeEmail = (pi as any).charges?.data?.[0]?.billing_details?.email ?? null
+    const email = pi.receipt_email ?? chargeEmail
     if (email && validItems.length > 0) {
       await trackKlaviyoOrder({
         email,

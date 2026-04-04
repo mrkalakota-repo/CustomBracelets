@@ -1,4 +1,6 @@
 import { create } from 'zustand'
+import { persist, createJSONStorage } from 'zustand/middleware'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import type { Product } from '../lib/products/catalog'
 import type { AddOns } from '../lib/builder/pricing'
 import { calculatePrice } from '../lib/builder/pricing'
@@ -31,7 +33,9 @@ function isValidPrice(price: number): boolean {
   return typeof price === 'number' && isFinite(price) && price >= 0
 }
 
-export const useCartStore = create<CartStore>((set, get) => ({
+export const useCartStore = create<CartStore>()(
+  persist(
+    (set, get) => ({
   items: [],
 
   addProduct: (product) => {
@@ -91,4 +95,12 @@ export const useCartStore = create<CartStore>((set, get) => ({
   total: () => get().items.reduce((sum, item) => sum + item.price * item.quantity, 0),
 
   itemCount: () => get().items.reduce((sum, item) => sum + item.quantity, 0),
-}))
+    }),
+    {
+      name: 'chic-charm-cart',
+      storage: createJSONStorage(() => AsyncStorage),
+      // Only persist the items array; derived functions are re-created by Zustand.
+      partialize: (state) => ({ items: state.items }),
+    }
+  )
+)

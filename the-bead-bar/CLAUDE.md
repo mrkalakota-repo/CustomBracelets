@@ -72,7 +72,7 @@ Server-side secrets (`STRIPE_SECRET_KEY`, `KLAVIYO_API_KEY`) are validated lazil
 
 **Cart** (`src/lib/cart/`, `src/context/CartContext.tsx`)
 - `cartTypes.ts` — `CartItem`, `cartTotal()`, `shippingCost()` (free ≥ $20), `orderTotal()`.
-- `CartContext.tsx` — persists to `localStorage` key `bead-bar-cart`, hydrates on mount via `HYDRATE` action. Parse errors clear the corrupted key and log a warning. Throws if `useCart()` is called outside `CartProvider`.
+- `CartContext.tsx` — persists to `localStorage` key `chic-charm-cart`, hydrates on mount via `HYDRATE` action. Parse errors clear the corrupted key and log a warning. Throws if `useCart()` is called outside `CartProvider`.
 
 **Products** (`src/lib/products/catalog.ts`)
 - `ALL_PRODUCTS` — single source of truth for the product catalog. Consumed by the home page (featured subset), shop page (full list), and product detail pages.

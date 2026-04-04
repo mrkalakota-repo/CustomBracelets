@@ -8,7 +8,7 @@ export default function TermsOfService() {
       <p>Last updated: April 2026</p>
 
       <p>
-        By placing an order or using The Bead Bar website, you agree to these terms. Please read them
+        By placing an order or using Chic Charm Co. website, you agree to these terms. Please read them
         before purchasing.
       </p>
 
@@ -39,13 +39,13 @@ export default function TermsOfService() {
 
       <h2 className="text-text-dark text-base font-semibold">Intellectual Property</h2>
       <p>
-        All designs, images, and content on this site are owned by The Bead Bar. You may not reproduce
+        All designs, images, and content on this site are owned by Chic Charm Co.. You may not reproduce
         or distribute them without written permission.
       </p>
 
       <h2 className="text-text-dark text-base font-semibold">Limitation of Liability</h2>
       <p>
-        The Bead Bar is not liable for indirect, incidental, or consequential damages arising from your
+        Chic Charm Co. is not liable for indirect, incidental, or consequential damages arising from your
         use of our products or website. Our total liability for any claim is limited to the amount you
         paid for the order in question.
       </p>
@@ -53,7 +53,7 @@ export default function TermsOfService() {
       <h2 className="text-text-dark text-base font-semibold">Governing Law</h2>
       <p>
         These terms are governed by the laws of the United States. Any disputes will be resolved in the
-        jurisdiction where The Bead Bar is registered.
+        jurisdiction where Chic Charm Co. is registered.
       </p>
 
       <h2 className="text-text-dark text-base font-semibold">Changes to These Terms</h2>
@@ -62,7 +62,7 @@ export default function TermsOfService() {
         constitutes acceptance of the new terms.
       </p>
 
-      <p>Questions? Email <span className="text-text-dark font-medium">hello@thebeadbar.com</span></p>
+      <p>Questions? Email <span className="text-text-dark font-medium">hello@chiccharmco.com</span></p>
     </div>
   )
 }

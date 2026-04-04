@@ -7,7 +7,7 @@ export default function PrivacyPolicy() {
       <h1 className="text-text-dark">Privacy Policy</h1>
       <p>Last updated: April 2026</p>
       <p>
-        The Bead Bar collects only the information needed to process your order and send shipping updates.
+        Chic Charm Co. collects only the information needed to process your order and send shipping updates.
         We do not sell or share your personal data with third parties outside of payment processing (Stripe)
         and email marketing (Klaviyo) — both of which process data on your behalf.
       </p>
@@ -22,7 +22,7 @@ export default function PrivacyPolicy() {
         You can request deletion of your data at any time by emailing us. Marketing emails include an
         unsubscribe link — use it anytime to opt out.
       </p>
-      <p>Questions? Email <span className="text-text-dark font-medium">hello@thebeadbar.com</span></p>
+      <p>Questions? Email <span className="text-text-dark font-medium">hello@chiccharmco.com</span></p>
     </div>
   )
 }

@@ -13,7 +13,7 @@ export function Nav() {
       <div className="page-container flex items-center justify-between h-14">
         {/* Brand */}
         <Link href="/" className="font-semibold text-text-dark tracking-tight hover:text-sage transition-colors">
-          The Bead Bar
+          Chic Charm Co.
         </Link>
 
         {/* Nav links */}

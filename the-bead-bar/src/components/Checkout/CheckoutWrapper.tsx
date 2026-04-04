@@ -17,7 +17,7 @@ export function CheckoutWrapper() {
 
     // Persist cart snapshot so order-confirmation can send Klaviyo tracking
     try {
-      sessionStorage.setItem('bead-bar-pending-order', JSON.stringify(items))
+      sessionStorage.setItem('chic-charm-pending-order', JSON.stringify(items))
     } catch {
       // sessionStorage unavailable (private browsing, etc.) — non-fatal
     }

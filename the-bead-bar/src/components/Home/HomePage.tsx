@@ -182,7 +182,7 @@ function Footer() {
           <Link href="https://instagram.com" aria-label="Instagram" className="hover:text-text-dark transition-colors">Instagram</Link>
           <Link href="https://pinterest.com" aria-label="Pinterest" className="hover:text-text-dark transition-colors">Pinterest</Link>
         </nav>
-        <p className="text-xs text-text-light">&copy; {new Date().getFullYear()} The Bead Bar</p>
+        <p className="text-xs text-text-light">&copy; {new Date().getFullYear()} Chic Charm Co.</p>
       </div>
     </footer>
   )

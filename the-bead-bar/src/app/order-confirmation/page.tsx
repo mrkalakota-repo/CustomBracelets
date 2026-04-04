@@ -20,10 +20,13 @@ function OrderConfirmationInner() {
       setStatus('success')
       if (piId) fireKlaviyoTracking(piId)
     } else if (redirectStatus) {
+      // Stripe returned a non-success status (e.g. 'failed', 'requires_action')
+      setStatus('failed')
+    } else {
+      // No redirect_status — user navigated directly to this URL without coming
+      // from Stripe. Show the failed/neutral state rather than a false success.
       setStatus('failed')
     }
-    // If no redirect_status, someone navigated here directly — show success fallback
-    if (!redirectStatus) setStatus('success')
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -32,10 +35,10 @@ function OrderConfirmationInner() {
       // Retrieve stored cart from sessionStorage (saved by CheckoutWrapper)
       let items: CartItem[] = []
       try {
-        const stored = sessionStorage.getItem('bead-bar-pending-order')
+        const stored = sessionStorage.getItem('chic-charm-pending-order')
         if (stored) {
           items = JSON.parse(stored) as CartItem[]
-          sessionStorage.removeItem('bead-bar-pending-order')
+          sessionStorage.removeItem('chic-charm-pending-order')
         }
       } catch {
         // sessionStorage unavailable — proceed without items

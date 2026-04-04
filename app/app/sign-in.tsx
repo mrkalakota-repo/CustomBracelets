@@ -135,7 +135,7 @@ export default function SignInScreen() {
           <Text className="text-gray-400 text-sm mb-8">
             {mode === 'signin'
               ? 'Sign in with your phone number and PIN.'
-              : 'Join The Bead Bar for early drop access and saved wishlists.'}
+              : 'Join Chic Charm Co. for early drop access and saved wishlists.'}
           </Text>
 
           {/* Tab Toggle */}

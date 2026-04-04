@@ -41,13 +41,14 @@ export function BuilderFlow({ isBff = false, onAddToCart }: BuilderFlowProps) {
   }
 
   function selectColor(color: string) {
-    setState(s => ({ ...s, primaryColor: color }))
-    // charm has no patterns — skip to add-ons
-    if (state.baseStyle === 'charm') {
-      setStep(4)
-    } else {
-      setStep(3)
-    }
+    // Read baseStyle from current state snapshot passed via functional update to
+    // avoid the stale-closure bug where state.baseStyle hasn't committed yet.
+    setState(s => {
+      const next = { ...s, primaryColor: color }
+      // charm has no patterns — skip to add-ons
+      setStep(s.baseStyle === 'charm' ? 4 : 3)
+      return next
+    })
   }
 
   function selectPattern(pattern: string) {
@@ -65,6 +66,17 @@ export function BuilderFlow({ isBff = false, onAddToCart }: BuilderFlowProps) {
     setDone(true)
   }
 
+  async function handleShare() {
+    const colorLabel = SEASONAL_COLORS.find(c => c.id === state.primaryColor)?.label ?? state.primaryColor ?? ''
+    const styleLabel = BASE_STYLES.find(s => s.id === state.baseStyle)?.label ?? state.baseStyle ?? ''
+    const text = `I just built a custom ${colorLabel} ${styleLabel} bracelet on Chic Charm Co.! 📿`
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try { await navigator.share({ title: 'My Custom Bracelet', text }) } catch { /* user dismissed */ }
+    } else {
+      await navigator.clipboard.writeText(text)
+    }
+  }
+
   function handleAddToCart() {
     if (!state.baseStyle || !state.primaryColor) return
     const colorLabel = SEASONAL_COLORS.find(c => c.id === state.primaryColor)?.label ?? state.primaryColor
@@ -74,13 +86,17 @@ export function BuilderFlow({ isBff = false, onAddToCart }: BuilderFlowProps) {
       : `Custom ${colorLabel} ${styleLabel}`
     // price is recalculated server-side; pass a client-side estimate for display
     const price = calculatePrice(state.baseStyle, state.addOns)
+    const addOns = {
+      ...state.addOns,
+      text: state.addOns.text?.trim() || undefined,
+    }
     const item: CartItem = {
       id:        Date.now().toString(),
       name,
       baseStyle: state.baseStyle,
       price,
       quantity:  1,
-      addOns:    state.addOns,
+      addOns,
       imageUrl:  `/images/${state.baseStyle}.svg`,
     }
     onAddToCart?.(item)
@@ -166,8 +182,13 @@ export function BuilderFlow({ isBff = false, onAddToCart }: BuilderFlowProps) {
               <input
                 type="text"
                 className="input mt-1"
-                onChange={e => setState(s => ({ ...s, addOns: { ...s.addOns, text: e.target.value } }))}
+                maxLength={20}
+                onChange={e => {
+                  const val = e.target.value.trimStart()
+                  setState(s => ({ ...s, addOns: { ...s.addOns, text: val || undefined } }))
+                }}
               />
+              <span className="text-xs text-text-light ml-1">max 20 characters</span>
             </label>
           </div>
           <div className="flex gap-3">
@@ -198,7 +219,7 @@ export function BuilderFlow({ isBff = false, onAddToCart }: BuilderFlowProps) {
           </div>
           <div className="flex gap-3">
             <button className="btn-secondary" onClick={goBack}>Back</button>
-            <button className="btn-secondary">Share</button>
+            <button className="btn-secondary" onClick={handleShare}>Share</button>
             <button className="btn-primary" onClick={handleAddToCart}>Add to Cart</button>
           </div>
         </div>

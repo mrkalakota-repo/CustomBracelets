@@ -1,4 +1,4 @@
--- Centralized pricing function for The Bead Bar
+-- Centralized pricing function for Chic Charm Co.
 -- This ensures the App and Web always match the Checkout logic.
 
 create or replace function public.calculate_bracelet_price(

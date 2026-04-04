@@ -94,7 +94,7 @@ export default function SignInPage() {
       <p className="text-sm text-text-mid mb-8">
         {mode === 'signin'
           ? 'Sign in with your phone number and PIN.'
-          : 'Join The Bead Bar for early drop access and saved wishlists.'}
+          : 'Join Chic Charm Co. for early drop access and saved wishlists.'}
       </p>
 
       {/* Tab toggle */}

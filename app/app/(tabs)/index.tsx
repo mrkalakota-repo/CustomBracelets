@@ -24,7 +24,7 @@ export default function HomeScreen() {
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View className="flex-row items-center justify-between px-5 pt-2 pb-2">
-          <Text className="text-2xl font-bold text-gray-800">The Bead Bar</Text>
+          <Text className="text-2xl font-bold text-gray-800">Chic Charm Co.</Text>
           <View className="flex-row items-center gap-2">
             <TouchableOpacity onPress={() => router.push('/shop')} className="h-10 px-3 items-center justify-center bg-white rounded-full shadow-sm">
               <Text className="text-xs font-semibold text-gray-700">Shop by Style</Text>

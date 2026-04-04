@@ -15,7 +15,7 @@ export class CartErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error) {
     console.error('[CartErrorBoundary]', error)
     // Clear corrupted cart data so the app recovers on next reload
-    try { localStorage.removeItem('bead-bar-cart') } catch { /* ignore */ }
+    try { localStorage.removeItem('chic-charm-cart') } catch { /* ignore */ }
   }
 
   render() {

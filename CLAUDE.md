@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Structure
 
-This is a monorepo for The Bead Bar — a D2C bracelet business. One git repo at this root level.
+This is a monorepo for Chic Charm Co. — a D2C bracelet business. One git repo at this root level.
 
 | Directory | What it is | Stack |
 |---|---|---|

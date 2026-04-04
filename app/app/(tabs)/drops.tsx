@@ -44,14 +44,17 @@ function CountdownTimer({ launchDate }: { launchDate: string }) {
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-export default function DropsScreen() {
+// ── Per-drop notify-me form — each instance has its own isolated state ────────
+
+interface NotifyMeFormProps {
+  drop: typeof ALL_DROPS[number]
+}
+
+function NotifyMeForm({ drop }: NotifyMeFormProps) {
   const [email, setEmail] = useState('')
   const [ageConfirmed, setAgeConfirmed] = useState(false)
   const [marketingConsent, setMarketingConsent] = useState(false)
   const [loading, setLoading] = useState(false)
-  const itemCount = useCartStore(s => s.itemCount())
-
-  const activeDrop = ALL_DROPS.find(d => d.status === 'upcoming' || d.status === 'live')
 
   async function handleNotifyMe() {
     if (!email || !EMAIL_RE.test(email)) return Alert.alert('Invalid email', 'Please enter a valid email address.')
@@ -65,10 +68,10 @@ export default function DropsScreen() {
       const res = await fetch(`${apiBase}/klaviyo-subscribe`, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ email, dropId: activeDrop?.id }),
+        body:    JSON.stringify({ email, dropId: drop.id }),
       })
       if (!res.ok) throw new Error('Subscription failed')
-      Alert.alert('You\'re on the list! 🌸', `We'll notify ${email} when ${activeDrop?.name} drops.`)
+      Alert.alert('You\u2019re on the list! \uD83C\uDF38', `We\u2019ll notify ${email} when ${drop.name} drops.`)
       setEmail('')
       setAgeConfirmed(false)
       setMarketingConsent(false)
@@ -78,6 +81,48 @@ export default function DropsScreen() {
       setLoading(false)
     }
   }
+
+  return (
+    <>
+      <TextInput
+        value={email}
+        onChangeText={setEmail}
+        placeholder="your@email.com"
+        keyboardType="email-address"
+        autoCapitalize="none"
+        className="border border-cream-dark rounded-full px-4 py-3 text-gray-800 text-sm mb-3"
+        placeholderTextColor="#9CA3AF"
+      />
+
+      <TouchableOpacity
+        onPress={() => setAgeConfirmed(!ageConfirmed)}
+        className="flex-row items-center gap-2 mb-2"
+      >
+        <View className={`w-5 h-5 rounded border-2 items-center justify-center ${ageConfirmed ? 'bg-sage border-sage' : 'border-gray-300'}`}>
+          {ageConfirmed && <Text className="text-white text-xs">✓</Text>}
+        </View>
+        <Text className="text-gray-500 text-sm">I confirm I am 13 or older</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={() => setMarketingConsent(!marketingConsent)}
+        className="flex-row items-center gap-2 mb-4"
+      >
+        <View className={`w-5 h-5 rounded border-2 items-center justify-center ${marketingConsent ? 'bg-sage border-sage' : 'border-gray-300'}`}>
+          {marketingConsent && <Text className="text-white text-xs">✓</Text>}
+        </View>
+        <Text className="text-gray-500 text-sm flex-1">I agree to receive marketing emails from Chic Charm Co.</Text>
+      </TouchableOpacity>
+
+      <Button label={loading ? 'Saving\u2026' : 'Notify Me \uD83C\uDF38'} onPress={handleNotifyMe} loading={loading} fullWidth />
+    </>
+  )
+}
+
+// ── Screen ────────────────────────────────────────────────────────────────────
+
+export default function DropsScreen() {
+  const itemCount = useCartStore(s => s.itemCount())
 
   return (
     <SafeAreaView className="flex-1 bg-cream">
@@ -129,38 +174,7 @@ export default function DropsScreen() {
               <>
                 <Text className="text-gray-600 text-sm font-medium mb-1">Drops in:</Text>
                 <CountdownTimer launchDate={drop.launchDate} />
-
-                <TextInput
-                  value={email}
-                  onChangeText={setEmail}
-                  placeholder="your@email.com"
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  className="border border-cream-dark rounded-full px-4 py-3 text-gray-800 text-sm mb-3"
-                  placeholderTextColor="#9CA3AF"
-                />
-
-                <TouchableOpacity
-                  onPress={() => setAgeConfirmed(!ageConfirmed)}
-                  className="flex-row items-center gap-2 mb-2"
-                >
-                  <View className={`w-5 h-5 rounded border-2 items-center justify-center ${ageConfirmed ? 'bg-sage border-sage' : 'border-gray-300'}`}>
-                    {ageConfirmed && <Text className="text-white text-xs">✓</Text>}
-                  </View>
-                  <Text className="text-gray-500 text-sm">I confirm I am 13 or older</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() => setMarketingConsent(!marketingConsent)}
-                  className="flex-row items-center gap-2 mb-4"
-                >
-                  <View className={`w-5 h-5 rounded border-2 items-center justify-center ${marketingConsent ? 'bg-sage border-sage' : 'border-gray-300'}`}>
-                    {marketingConsent && <Text className="text-white text-xs">✓</Text>}
-                  </View>
-                  <Text className="text-gray-500 text-sm flex-1">I agree to receive marketing emails from The Bead Bar</Text>
-                </TouchableOpacity>
-
-                <Button label={loading ? 'Saving…' : 'Notify Me 🌸'} onPress={handleNotifyMe} loading={loading} fullWidth />
+                <NotifyMeForm drop={drop} />
               </>
             )}
 

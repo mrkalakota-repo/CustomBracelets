@@ -27,12 +27,12 @@ const SECTIONS = [
   {
     title: 'Intellectual Property',
     icon: '🎨',
-    body: 'All designs, images, and content are owned by The Bead Bar. You may not reproduce or distribute them without written permission.',
+    body: 'All designs, images, and content are owned by Chic Charm Co.. You may not reproduce or distribute them without written permission.',
   },
   {
     title: 'Limitation of Liability',
     icon: '⚖️',
-    body: 'The Bead Bar is not liable for indirect or consequential damages. Our total liability for any claim is limited to the amount you paid for the order in question.',
+    body: 'Chic Charm Co. is not liable for indirect or consequential damages. Our total liability for any claim is limited to the amount you paid for the order in question.',
   },
   {
     title: 'Changes to These Terms',
@@ -71,7 +71,7 @@ export default function TermsOfServiceScreen() {
 
         <View className="mt-6 bg-sage/10 rounded-2xl p-4">
           <Text className="text-sage-dark text-sm font-medium text-center">Questions?</Text>
-          <Text className="text-gray-400 text-xs text-center mt-1">hello@thebeadbar.com</Text>
+          <Text className="text-gray-400 text-xs text-center mt-1">hello@chiccharmco.com</Text>
         </View>
       </ScrollView>
     </SafeAreaView>
