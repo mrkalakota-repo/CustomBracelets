@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
@@ -22,8 +22,11 @@ export const metadata: Metadata = {
   title:       "Chic Charm Co.",
   description: "Custom bracelets, seasonal drops & BFF sets.",
   manifest:    "/manifest.json",
-  themeColor:  "#8FAF8A",
   appleWebApp: { capable: true, statusBarStyle: "default", title: "Chic Charm Co." },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#8FAF8A",
 };
 
 export default function RootLayout({
