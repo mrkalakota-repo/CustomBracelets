@@ -1,0 +1,32 @@
+version: 1
+applications:
+  - frontend:
+      phases:
+        preBuild:
+          commands:
+            - npm install
+        build:
+          commands:
+            # Inject Amplify Console env vars into .env so Next.js SSR Lambda can read them at runtime.
+            # NEXT_PUBLIC_* vars are baked into the JS bundle by Next.js automatically from the shell
+            # environment — they do not need to be echoed here.
+            - echo "STRIPE_SECRET_KEY=$STRIPE_SECRET_KEY" >> .env
+            - echo "KLAVIYO_API_KEY=$KLAVIYO_API_KEY" >> .env
+            - echo "KLAVIYO_DROP_LIST_ID=$KLAVIYO_DROP_LIST_ID" >> .env
+            - echo "KLAVIYO_WAITLIST_LIST_ID=$KLAVIYO_WAITLIST_LIST_ID" >> .env
+            - echo "KLAVIYO_MARKETING_LIST_ID=$KLAVIYO_MARKETING_LIST_ID" >> .env
+            - echo "SENTRY_DSN=$SENTRY_DSN" >> .env
+            - echo "SENTRY_AUTH_TOKEN=$SENTRY_AUTH_TOKEN" >> .env
+            - echo "SENTRY_ORG=$SENTRY_ORG" >> .env
+            - echo "SENTRY_PROJECT=$SENTRY_PROJECT" >> .env
+            - echo "POSTHOG_API_KEY=$POSTHOG_API_KEY" >> .env
+            - echo "POSTHOG_HOST=$POSTHOG_HOST" >> .env
+            - npm run build
+      artifacts:
+        baseDirectory: .next
+        files:
+          - "**/*"
+      cache:
+        paths:
+          - node_modules/**/*
+    appRoot: the-bead-bar
