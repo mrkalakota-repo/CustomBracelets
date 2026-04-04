@@ -23,6 +23,7 @@ const TYPE_FILTERS = [
   { id: 'beaded',    label: 'Beaded' },
   { id: 'cord',      label: 'Cord' },
   { id: 'chain',     label: 'Chain' },
+  { id: 'charm',     label: 'Charm' },
   { id: 'stackable', label: 'Stackable' },
 ]
 

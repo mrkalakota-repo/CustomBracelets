@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 
-const STORAGE_KEY = 'bead-bar-cookie-consent'
+const STORAGE_KEY = 'chic-charm-cookie-consent'
 
 export function CookieBanner() {
   const [visible, setVisible] = useState(false)

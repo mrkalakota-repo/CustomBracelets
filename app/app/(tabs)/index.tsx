@@ -26,7 +26,7 @@ export default function HomeScreen() {
         <View className="flex-row items-center justify-between px-5 pt-2 pb-2">
           <Text className="text-2xl font-bold text-gray-800">Chic Charm Co.</Text>
           <View className="flex-row items-center gap-2">
-            <TouchableOpacity onPress={() => router.push('/shop')} className="h-10 px-3 items-center justify-center bg-white rounded-full shadow-sm">
+            <TouchableOpacity onPress={() => router.push('/(tabs)/shop')} className="h-10 px-3 items-center justify-center bg-white rounded-full shadow-sm">
               <Text className="text-xs font-semibold text-gray-700">Shop by Style</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => router.push('/cart')} className="w-10 h-10 items-center justify-center">
@@ -67,7 +67,7 @@ export default function HomeScreen() {
             {CATEGORIES.map(cat => (
               <TouchableOpacity
                 key={cat.id}
-                onPress={() => router.push({ pathname: '/shop', params: { type: cat.id } })}
+                onPress={() => router.push({ pathname: '/(tabs)/shop', params: { type: cat.id } })}
                 className="bg-white rounded-2xl px-4 py-3 items-center shadow-sm"
                 style={{ minWidth: 80 }}
               >
