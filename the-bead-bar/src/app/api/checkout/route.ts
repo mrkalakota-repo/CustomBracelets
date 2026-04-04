@@ -26,8 +26,7 @@ const CheckoutBodySchema = z.object({
 })
 
 export async function POST(req: Request) {
-  console.log('[checkout] env keys:', Object.keys(process.env).filter(k => k.startsWith('STRIPE')))
-  const ip = req.headers.get('x-forwarded-for') ?? 'unknown'
+const ip = req.headers.get('x-forwarded-for') ?? 'unknown'
   if (!rateLimit(`checkout:${ip}`, 10, 60_000)) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
   }
