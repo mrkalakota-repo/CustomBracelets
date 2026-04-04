@@ -3,7 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import type { Product } from '../lib/products/catalog'
 import type { AddOns } from '../lib/builder/pricing'
-import { calculatePrice } from '../lib/builder/pricing'
+import { calculatePriceLocal } from '../lib/builder/pricing'
 import type { BaseStyle } from '../lib/builder/compatibility'
 
 export interface CartItem {
@@ -66,7 +66,7 @@ export const useCartStore = create<CartStore>()(
       console.warn('[cart] addCustom: missing baseStyle', config)
       return
     }
-    const price = calculatePrice(config.baseStyle, config.addOns ?? {})
+    const price = calculatePriceLocal(config.baseStyle, config.addOns ?? {})
     if (!isValidPrice(price)) {
       console.warn('[cart] addCustom: calculated price is invalid', price)
       return
