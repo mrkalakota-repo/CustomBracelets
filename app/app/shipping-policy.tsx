@@ -66,7 +66,7 @@ export default function ShippingPolicyScreen() {
             Questions? We're here to help. 💚
           </Text>
           <Text className="text-gray-400 text-xs text-center mt-1">
-            Contact us via the app or at hello@chiccharmco.com
+            Contact us via the app or at thechiccharmco@gmail.com
           </Text>
         </View>
       </ScrollView>

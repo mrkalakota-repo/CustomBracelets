@@ -71,7 +71,7 @@ export default function TermsOfServiceScreen() {
 
         <View className="mt-6 bg-sage/10 rounded-2xl p-4">
           <Text className="text-sage-dark text-sm font-medium text-center">Questions?</Text>
-          <Text className="text-gray-400 text-xs text-center mt-1">hello@chiccharmco.com</Text>
+          <Text className="text-gray-400 text-xs text-center mt-1">thechiccharmco@gmail.com</Text>
         </View>
       </ScrollView>
     </SafeAreaView>

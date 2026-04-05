@@ -22,7 +22,7 @@ export default function PrivacyPolicy() {
         You can request deletion of your data at any time by emailing us. Marketing emails include an
         unsubscribe link — use it anytime to opt out.
       </p>
-      <p>Questions? Email <span className="text-text-dark font-medium">hello@chiccharmco.com</span></p>
+      <p>Questions? Email <span className="text-text-dark font-medium">thechiccharmco@gmail.com</span></p>
     </div>
   )
 }

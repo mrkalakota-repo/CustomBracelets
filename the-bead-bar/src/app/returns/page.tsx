@@ -17,7 +17,7 @@ export default function Returns() {
       </ul>
       <h2 className="text-text-dark text-base font-semibold">How to start a return</h2>
       <p>
-        Email <span className="text-text-dark font-medium">hello@chiccharmco.com</span> with your order
+        Email <span className="text-text-dark font-medium">thechiccharmco@gmail.com</span> with your order
         number and reason for return. We&apos;ll send a prepaid return label within one business day.
         Refunds are issued to your original payment method within 5–7 business days of receiving the item.
       </p>

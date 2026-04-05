@@ -62,7 +62,7 @@ export default function TermsOfService() {
         constitutes acceptance of the new terms.
       </p>
 
-      <p>Questions? Email <span className="text-text-dark font-medium">hello@chiccharmco.com</span></p>
+      <p>Questions? Email <span className="text-text-dark font-medium">thechiccharmco@gmail.com</span></p>
     </div>
   )
 }
