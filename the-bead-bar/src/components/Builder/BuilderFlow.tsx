@@ -137,9 +137,23 @@ export function BuilderFlow({ isBff = false, onAddToCart }: BuilderFlowProps) {
       {step === 2 && (
         <div data-testid="step-2" className="flex flex-col gap-4 mt-6">
           <h2 className="text-center">Choose Primary Color</h2>
-          <div className="flex flex-wrap gap-3 justify-center">
-            {SEASONAL_COLORS.map(({ id, label }) => (
-              <button key={id} className="btn-secondary" onClick={() => selectColor(id)}>{label}</button>
+          <div className="flex flex-wrap gap-4 justify-center">
+            {SEASONAL_COLORS.map(({ id, label, hex }) => (
+              <button
+                key={id}
+                onClick={() => selectColor(id)}
+                className={`flex flex-col items-center gap-2 p-3 rounded-2xl border-2 bg-white shadow-sm hover:shadow-md transition-shadow w-24 ${
+                  state.primaryColor === id ? 'border-sage' : 'border-transparent'
+                }`}
+                aria-label={label}
+                aria-pressed={state.primaryColor === id}
+              >
+                <span
+                  className="w-12 h-12 rounded-full border border-border"
+                  style={{ backgroundColor: hex }}
+                />
+                <span className="text-xs font-medium text-text-dark text-center leading-tight">{label}</span>
+              </button>
             ))}
           </div>
           <button className="btn-secondary self-start" onClick={goBack}>Back</button>

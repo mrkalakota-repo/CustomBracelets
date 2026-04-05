@@ -1,10 +1,11 @@
 import { ShopPage } from '@/components/Shop/ShopPage'
 import { ALL_PRODUCTS } from '@/lib/products/catalog'
 
-export default function Shop({
+export default async function Shop({
   searchParams,
 }: {
-  searchParams: { type?: string }
+  searchParams: Promise<{ type?: string }>
 }) {
-  return <ShopPage products={ALL_PRODUCTS} initialType={searchParams.type} />
+  const { type } = await searchParams
+  return <ShopPage products={ALL_PRODUCTS} initialType={type} />
 }

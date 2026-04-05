@@ -9,11 +9,14 @@ export const BASE_STYLES: { id: BaseStyle; label: string }[] = [
 ]
 
 export const SEASONAL_COLORS = [
-  { id: 'sage-green',  label: 'Sage Green' },
-  { id: 'cream',       label: 'Cream' },
-  { id: 'soft-gold',   label: 'Soft Gold' },
-  { id: 'dusty-rose',  label: 'Dusty Rose' },
-  { id: 'off-white',   label: 'Off White' },
+  { id: 'sage-green',  label: 'Sage Green',  hex: '#8FAF8A' },
+  { id: 'cream',       label: 'Cream',       hex: '#F5F0E8' },
+  { id: 'dusty-rose',  label: 'Dusty Rose',  hex: '#D4A0A0' },
+  { id: 'sky-blue',    label: 'Sky Blue',    hex: '#A0C4D4' },
+  { id: 'lavender',    label: 'Lavender',    hex: '#C4A0D4' },
+  { id: 'peach',       label: 'Peach',       hex: '#F4C49E' },
+  { id: 'soft-gold',   label: 'Soft Gold',   hex: '#C9A96E' },
+  { id: 'white',       label: 'Pearl White', hex: '#F8F6F3' },
 ]
 
 export const PATTERNS: Record<BaseStyle, { id: string; label: string }[]> = {
