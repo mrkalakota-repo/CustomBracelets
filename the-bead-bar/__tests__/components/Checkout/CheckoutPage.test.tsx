@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { CheckoutPage } from '@/components/Checkout/CheckoutPage'
 import type { CartItem } from '@/lib/cart/cartTypes'
 
@@ -117,24 +117,18 @@ describe('CheckoutPage — Payment Options', () => {
     expect(screen.getByTestId('express-checkout')).toBeInTheDocument()
   })
 
-  it('renders BNPL section with age gate', () => {
+  it('does not render BNPL section (removed pending provider integration)', () => {
     render(<CheckoutPage items={CART_ITEMS} />)
-    expect(screen.getByTestId('bnpl-section')).toBeInTheDocument()
-  })
-
-  it('BNPL options are hidden behind age confirmation', () => {
-    render(<CheckoutPage items={CART_ITEMS} />)
-    expect(screen.getByTestId('bnpl-section')).toBeInTheDocument()
-    // BNPL buttons only visible after age confirmation
+    expect(screen.queryByTestId('bnpl-section')).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /afterpay/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /klarna/i })).not.toBeInTheDocument()
   })
 
-  it('reveals BNPL buttons after age is confirmed', () => {
+  it('renders an Edit cart link back to /cart', () => {
     render(<CheckoutPage items={CART_ITEMS} />)
-    const checkbox = screen.getByRole('checkbox', { name: /18/i })
-    fireEvent.click(checkbox)
-    expect(screen.getByRole('button', { name: /afterpay/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /klarna/i })).toBeInTheDocument()
+    const link = screen.getByRole('link', { name: /edit cart/i })
+    expect(link).toBeInTheDocument()
+    expect(link).toHaveAttribute('href', '/cart')
   })
 })
 

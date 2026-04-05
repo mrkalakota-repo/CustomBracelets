@@ -14,7 +14,7 @@ const CartItemSchema = z.object({
   quantity:  z.number().int().min(1).max(20),
   addOns: z.object({
     charm:    z.string().optional(),
-    text:     z.string().max(40).optional(),
+    text:     z.string().max(20).optional(),
     giftWrap: z.boolean().optional(),
     rush:     z.boolean().optional(),
     bffDuo:   z.boolean().optional(),

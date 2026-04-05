@@ -54,6 +54,11 @@ function validateItem(item: unknown): item is CartItem {
   if (typeof i.id !== 'string') return false
   if (typeof i.baseStyle !== 'string' || !(i.baseStyle in BASE_PRICES)) return false
   if (typeof i.quantity !== 'number' || i.quantity < 1 || i.quantity > 20 || !Number.isInteger(i.quantity)) return false
+  // Validate addOns if present
+  if (i.addOns !== undefined && i.addOns !== null && typeof i.addOns === 'object') {
+    const addOns = i.addOns as Record<string, unknown>
+    if (addOns.text !== undefined && (typeof addOns.text !== 'string' || addOns.text.length > 20)) return false
+  }
   return true
 }
 

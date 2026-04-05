@@ -48,3 +48,55 @@ describe('calculatePrice', () => {
     expect(calculatePrice('cord', {})).toBeGreaterThan(0)
   })
 })
+
+// ─── CROSS-PLATFORM PARITY ────────────────────────────────────────────────────
+//
+// These tests assert that the canonical pricing values here match those in:
+//   - app/src/lib/builder/pricing.ts  (calculatePriceLocal)
+//   - supabase/functions/checkout/index.ts (calculatePrice, inlined)
+//
+// If any of these fail after a price change, update ALL THREE files.
+
+describe('Pricing parity — cross-platform constants', () => {
+  // These MUST match BASE_PRICES in app/src/lib/builder/pricing.ts
+  // and BASE_PRICES in supabase/functions/checkout/index.ts
+  const CROSS_PLATFORM_BASE: Record<string, number> = {
+    beaded:    12,
+    cord:      10,
+    chain:     18,
+    charm:     15,
+    stackable: 25,
+  }
+
+  // These MUST match ADDON_PRICES in app/src/lib/builder/pricing.ts
+  // and ADDON_PRICES in supabase/functions/checkout/index.ts
+  const CROSS_PLATFORM_ADDONS = { charm: 3, text: 4, giftWrap: 2, rush: 5 }
+
+  it('BASE_PRICES match cross-platform expected values', () => {
+    expect(BASE_PRICES).toEqual(CROSS_PLATFORM_BASE)
+  })
+
+  it('ADDON_PRICES match cross-platform expected values', () => {
+    expect(ADDON_PRICES).toEqual(CROSS_PLATFORM_ADDONS)
+  })
+
+  it('BFF duo formula is price*2-2 across all base styles', () => {
+    for (const [style, base] of Object.entries(CROSS_PLATFORM_BASE)) {
+      const expected = base * 2 - 2
+      expect(calculatePrice(style as any, { bffDuo: true })).toBe(expected)
+    }
+  })
+
+  it('all add-ons stack correctly — matches native calculatePriceLocal logic', () => {
+    const allAddOns = { charm: 'star', text: 'BFF', giftWrap: true as const, rush: true as const }
+    const expected  = 12 + 3 + 4 + 2 + 5 // beaded + charm + text + giftWrap + rush
+    expect(calculatePrice('beaded', allAddOns)).toBe(expected)
+  })
+
+  it('shipping is free at $20 and above — matches native and edge function', () => {
+    const { shippingCost } = require('@/lib/cart/cartTypes')
+    expect(shippingCost(20)).toBe(0)
+    expect(shippingCost(19.99)).toBe(3.99)
+    expect(shippingCost(0)).toBe(3.99)
+  })
+})

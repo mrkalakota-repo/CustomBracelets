@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { DropState } from '@/lib/drops/state'
+import { DropStripTimer } from './DropStripTimer'
 
 interface Product {
   id:       string
@@ -76,19 +77,6 @@ function DropStrip({ drop }: { drop: ActiveDrop }) {
   )
 }
 
-function DropStripTimer({ launchDate }: { launchDate: Date }) {
-  const diff         = Math.max(0, launchDate.getTime() - Date.now())
-  const totalSeconds = Math.floor(diff / 1000)
-  const hours        = Math.floor(totalSeconds / 3600)
-  const minutes      = Math.floor((totalSeconds % 3600) / 60)
-  const seconds      = totalSeconds % 60
-
-  return (
-    <span data-testid="drop-strip-timer">
-      {hours}h {minutes}m {seconds}s
-    </span>
-  )
-}
 
 // ─── CATEGORIES ───────────────────────────────────────────────────────────────
 
