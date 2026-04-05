@@ -1,6 +1,10 @@
 import { render, screen, fireEvent, within } from '@testing-library/react'
 import { ShopPage } from '@/components/Shop/ShopPage'
 
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({ replace: jest.fn() }),
+}))
+
 const PRODUCTS = [
   { id: '1', name: 'Sage Beaded',   type: 'beaded',    price: 12, imageUrl: '/img/1.jpg', occasion: 'everyday' },
   { id: '2', name: 'Cream Cord',    type: 'cord',      price: 10, imageUrl: '/img/2.jpg', occasion: 'everyday' },

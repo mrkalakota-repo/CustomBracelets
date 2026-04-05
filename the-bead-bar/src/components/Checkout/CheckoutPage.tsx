@@ -1,8 +1,7 @@
 'use client'
 
-import { useState } from 'react'
 import Image from 'next/image'
-import { AgeGateForm } from '@/components/AgeGateForm/AgeGateForm'
+import Link from 'next/link'
 import {
   cartTotal, shippingCost, orderTotal,
   FREE_SHIPPING_THRESHOLD, SHIPPING_COST,
@@ -13,16 +12,12 @@ interface CheckoutPageProps {
   items:           CartItem[]
   paymentSection?: React.ReactNode
   onPayNow?:       () => void
-  onAfterpay?:     () => void
-  onKlarna?:       () => void
 }
 
-export function CheckoutPage({ items, paymentSection, onPayNow, onAfterpay, onKlarna }: CheckoutPageProps) {
-  const [bnplAgeConfirmed, setBnplAgeConfirmed] = useState(false)
-
-  const subtotal = cartTotal(items)
-  const shipping = shippingCost(subtotal)
-  const total    = orderTotal(items)
+export function CheckoutPage({ items, paymentSection, onPayNow }: CheckoutPageProps) {
+  const subtotal  = cartTotal(items)
+  const shipping  = shippingCost(subtotal)
+  const total     = orderTotal(items)
   const needsMore = FREE_SHIPPING_THRESHOLD - subtotal
 
   return (
@@ -37,7 +32,10 @@ export function CheckoutPage({ items, paymentSection, onPayNow, onAfterpay, onKl
         <>
           {/* Cart Summary */}
           <section className="card p-5 flex flex-col gap-4">
-            <h2 className="text-base font-semibold">Your Order</h2>
+            <div className="flex items-center justify-between">
+              <h2 className="text-base font-semibold">Your Order</h2>
+              <Link href="/cart" className="text-xs text-sage hover:underline">Edit cart</Link>
+            </div>
             <div className="flex flex-col gap-3">
               {items.map(item => (
                 <CartItemRow key={item.id} item={item} />
@@ -70,7 +68,6 @@ export function CheckoutPage({ items, paymentSection, onPayNow, onAfterpay, onKl
 
           {/* Checkout Form */}
           <section data-testid="checkout-form" className="card p-5 flex flex-col gap-5">
-            {/* Payment section — real Stripe Elements in production, prop-injectable for tests */}
             {paymentSection ?? (
               <>
                 <div data-testid="express-checkout" className="flex flex-col gap-2">
@@ -86,29 +83,6 @@ export function CheckoutPage({ items, paymentSection, onPayNow, onAfterpay, onKl
                 <button className="btn-primary w-full" onClick={onPayNow}>Pay Now</button>
               </>
             )}
-
-            <div className="flex items-center gap-3">
-              <hr className="flex-1 border-border" />
-              <span className="text-xs text-text-light">buy now pay later</span>
-              <hr className="flex-1 border-border" />
-            </div>
-
-            {/* BNPL section */}
-            <div data-testid="bnpl-section" className="flex flex-col gap-3">
-              <p className="text-sm text-text-mid">Buy Now, Pay Later (18+ only)</p>
-              <AgeGateForm
-                checked={bnplAgeConfirmed}
-                onChange={setBnplAgeConfirmed}
-                minAge={18}
-                showBnplNote
-              />
-              {bnplAgeConfirmed && (
-                <div className="flex gap-3">
-                  <button className="btn-secondary flex-1" onClick={onAfterpay}>Afterpay</button>
-                  <button className="btn-secondary flex-1" onClick={onKlarna}>Klarna</button>
-                </div>
-              )}
-            </div>
           </section>
         </>
       )}

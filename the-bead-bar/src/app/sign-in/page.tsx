@@ -17,7 +17,7 @@ function formatPhone(raw: string): string {
 
 export default function SignInPage() {
   const router = useRouter()
-  const { signInWithPhone, signUpWithPhone } = useAuth()
+  const { signInWithPhone, signUpWithPhone, resendOtp } = useAuth()
 
   const [mode, setMode]                     = useState<Mode>('signin')
   const [phone, setPhone]                   = useState('')
@@ -27,6 +27,7 @@ export default function SignInPage() {
   const [ageConfirmed, setAgeConfirmed]     = useState(false)
   const [loading, setLoading]               = useState(false)
   const [error, setError]                   = useState<string | null>(null)
+  const [showForgotPin, setShowForgotPin]   = useState(false)
 
   function handlePhoneChange(e: React.ChangeEvent<HTMLInputElement>) {
     setPhone(formatPhone(e.target.value))
@@ -45,6 +46,23 @@ export default function SignInPage() {
     setPin('')
     setConfirmPin('')
     setError(null)
+    setShowForgotPin(false)
+  }
+
+  async function handleForgotPin(e: React.FormEvent) {
+    e.preventDefault()
+    setError(null)
+    const rawDigits = phone.replace(/\D/g, '')
+    if (rawDigits.length < 10) {
+      setError('Please enter a valid 10-digit US phone number.')
+      return
+    }
+    setLoading(true)
+    // Trigger OTP via resendOtp — verify-phone handles both signup and PIN reset
+    const { error: err } = await resendOtp(phone)
+    setLoading(false)
+    if (err) { setError(err); return }
+    router.push(`/verify-phone?phone=${encodeURIComponent(phone)}&action=reset`)
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -113,7 +131,44 @@ export default function SignInPage() {
         ))}
       </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      {/* ── Forgot PIN inline form ─────────────────────────────────────────── */}
+      {showForgotPin && (
+        <form onSubmit={handleForgotPin} className="flex flex-col gap-4">
+          <p className="text-sm text-text-mid">
+            Enter your phone number and we&apos;ll send a verification code to reset your PIN.
+          </p>
+          <div>
+            <label className="block text-sm font-medium text-text-mid mb-1.5">Phone Number</label>
+            <input
+              className="input w-full"
+              type="tel"
+              placeholder="(555) 000-0000"
+              value={phone}
+              onChange={handlePhoneChange}
+              autoComplete="tel"
+              inputMode="numeric"
+            />
+          </div>
+          {error && <p className="text-sm text-red-500">{error}</p>}
+          <button
+            type="submit"
+            disabled={loading}
+            className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? 'Sending code…' : 'Send Reset Code'}
+          </button>
+          <button
+            type="button"
+            onClick={() => { setShowForgotPin(false); setError(null) }}
+            className="text-sm text-text-mid hover:text-text-dark transition-colors text-center"
+          >
+            Back to sign in
+          </button>
+        </form>
+      )}
+
+      {/* ── Main sign-in / sign-up form ────────────────────────────────────── */}
+      {!showForgotPin && <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         {mode === 'signup' && (
           <div>
             <label className="block text-sm font-medium text-text-mid mb-1.5">Name</label>
@@ -142,9 +197,20 @@ export default function SignInPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-text-mid mb-1.5">
-            {mode === 'signin' ? 'PIN' : 'Create PIN (6 digits)'}
-          </label>
+          <div className="flex items-center justify-between mb-1.5">
+            <label className="block text-sm font-medium text-text-mid">
+              {mode === 'signin' ? 'PIN' : 'Create PIN (6 digits)'}
+            </label>
+            {mode === 'signin' && (
+              <button
+                type="button"
+                onClick={() => { setShowForgotPin(true); setError(null) }}
+                className="text-xs text-sage hover:underline"
+              >
+                Forgot PIN?
+              </button>
+            )}
+          </div>
           <input
             className="input w-full tracking-widest text-center"
             type="password"
@@ -201,7 +267,7 @@ export default function SignInPage() {
             ? (mode === 'signin' ? 'Signing in…' : 'Creating account…')
             : (mode === 'signin' ? 'Sign In' : 'Create Account')}
         </button>
-      </form>
+      </form>}
     </main>
   )
 }

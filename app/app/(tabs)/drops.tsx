@@ -3,6 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert } from 'reac
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router } from 'expo-router'
 import { ALL_DROPS } from '../../src/lib/drops/registry'
+import { getDropState } from '../../src/lib/drops/state'
 import { Button } from '../../src/components/ui/Button'
 import { useCartStore } from '../../src/store/cart'
 
@@ -142,50 +143,60 @@ export default function DropsScreen() {
       </View>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 20 }}>
 
-        {ALL_DROPS.map(drop => (
-          <View key={drop.id} className="bg-white rounded-3xl p-5 mb-4 shadow-sm">
-            {/* Status Badge */}
-            <View className={`self-start px-3 py-1 rounded-full mb-3 ${
-              drop.status === 'live'     ? 'bg-red-100' :
-              drop.status === 'upcoming' ? 'bg-sage/20' :
-              drop.status === 'sold_out' ? 'bg-gray-100' : 'bg-gray-100'
-            }`}>
-              <Text className={`text-xs font-bold uppercase tracking-wider ${
-                drop.status === 'live'     ? 'text-red-600' :
-                drop.status === 'upcoming' ? 'text-sage-dark' :
-                'text-gray-500'
+        {ALL_DROPS.map(drop => {
+          const status = getDropState(drop.launchDate, drop.stock)
+          return (
+            <View key={drop.id} className="bg-white rounded-3xl p-5 mb-4 shadow-sm">
+              {/* Status Badge */}
+              <View className={`self-start px-3 py-1 rounded-full mb-3 ${
+                status === 'live'     ? 'bg-red-100' :
+                status === 'upcoming' ? 'bg-sage/20' :
+                status === 'sold_out' ? 'bg-gray-100' : 'bg-gray-100'
               }`}>
-                {drop.status === 'live'     ? '🔴 Live Now' :
-                 drop.status === 'upcoming' ? '⏰ Coming Soon' :
-                 drop.status === 'sold_out' ? '🚫 Sold Out' : 'Ended'}
-              </Text>
-            </View>
-
-            <Text className="text-gray-800 text-xl font-bold">{drop.name}</Text>
-            <Text className="text-gray-500 text-sm mt-1">{drop.theme}</Text>
-
-            {/* Sneak Peek placeholder */}
-            <View className="bg-cream rounded-2xl h-40 items-center justify-center my-4">
-              <Text className="text-5xl">🌸</Text>
-              <Text className="text-gray-400 text-sm mt-2">Sneak peek coming soon</Text>
-            </View>
-
-            {drop.status === 'upcoming' && (
-              <>
-                <Text className="text-gray-600 text-sm font-medium mb-1">Drops in:</Text>
-                <CountdownTimer launchDate={drop.launchDate} />
-                <NotifyMeForm drop={drop} />
-              </>
-            )}
-
-            {drop.status === 'sold_out' && (
-              <View className="bg-gray-100 rounded-2xl p-4 items-center">
-                <Text className="text-gray-600 font-semibold">This drop has sold out</Text>
-                <Text className="text-gray-400 text-sm mt-1">Join the waitlist for the next one</Text>
+                <Text className={`text-xs font-bold uppercase tracking-wider ${
+                  status === 'live'     ? 'text-red-600' :
+                  status === 'upcoming' ? 'text-sage-dark' :
+                  'text-gray-500'
+                }`}>
+                  {status === 'live'     ? '🔴 Live Now' :
+                   status === 'upcoming' ? '⏰ Coming Soon' :
+                   status === 'sold_out' ? '🚫 Sold Out' : 'Ended'}
+                </Text>
               </View>
-            )}
-          </View>
-        ))}
+
+              <Text className="text-gray-800 text-xl font-bold">{drop.name}</Text>
+              <Text className="text-gray-500 text-sm mt-1">{drop.theme}</Text>
+
+              {/* Sneak Peek placeholder */}
+              <View className="bg-cream rounded-2xl h-40 items-center justify-center my-4">
+                <Text className="text-5xl">🌸</Text>
+                <Text className="text-gray-400 text-sm mt-2">Sneak peek coming soon</Text>
+              </View>
+
+              {status === 'upcoming' && (
+                <>
+                  <Text className="text-gray-600 text-sm font-medium mb-1">Drops in:</Text>
+                  <CountdownTimer launchDate={drop.launchDate} />
+                  <NotifyMeForm drop={drop} />
+                </>
+              )}
+
+              {status === 'live' && (
+                <View className="bg-sage/10 rounded-2xl p-4 items-center">
+                  <Text className="text-sage-dark font-semibold">This drop is live! 🎉</Text>
+                  <Text className="text-gray-400 text-sm mt-1">Shop now before it sells out</Text>
+                </View>
+              )}
+
+              {status === 'sold_out' && (
+                <View className="bg-gray-100 rounded-2xl p-4 items-center">
+                  <Text className="text-gray-600 font-semibold">This drop has sold out</Text>
+                  <Text className="text-gray-400 text-sm mt-1">Join the waitlist for the next one</Text>
+                </View>
+              )}
+            </View>
+          )
+        })}
       </ScrollView>
     </SafeAreaView>
   )

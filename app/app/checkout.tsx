@@ -229,10 +229,6 @@ export default function CheckoutScreen() {
           </View>
         )}
 
-        {/* BNPL note — no actual BNPL UI until 18+ gate is wired to a BNPL provider */}
-        <Text className="text-gray-400 text-xs text-center mb-4">
-          Afterpay · Klarna available for buyers 18+ (coming soon)
-        </Text>
       </ScrollView>
 
       <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-cream-dark px-5 pb-8 pt-4">

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -28,7 +29,14 @@ const TYPE_FILTERS = [
 ]
 
 export function ShopPage({ products, initialType }: ShopPageProps) {
+  const router = useRouter()
   const [activeType, setActiveType] = useState(initialType ?? 'all')
+
+  function selectType(id: string) {
+    setActiveType(id)
+    const params = id === 'all' ? '/shop' : `/shop?type=${id}`
+    router.replace(params, { scroll: false })
+  }
 
   const filtered = activeType === 'all'
     ? products
@@ -45,7 +53,7 @@ export function ShopPage({ products, initialType }: ShopPageProps) {
             key={id}
             className="filter-btn"
             data-active={String(activeType === id)}
-            onClick={() => setActiveType(id)}
+            onClick={() => selectType(id)}
           >
             {label}
           </button>
@@ -56,7 +64,7 @@ export function ShopPage({ products, initialType }: ShopPageProps) {
       {filtered.length === 0 ? (
         <div data-testid="empty-state" className="text-center py-16 flex flex-col items-center gap-4">
           <p className="text-text-mid">No bracelets found for this filter.</p>
-          <button className="btn-secondary" onClick={() => setActiveType('all')}>Clear filter</button>
+          <button className="btn-secondary" onClick={() => selectType('all')}>Clear filter</button>
         </div>
       ) : (
         <div className="grid-2">

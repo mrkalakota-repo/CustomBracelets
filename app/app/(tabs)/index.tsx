@@ -4,6 +4,7 @@ import { router } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { ALL_PRODUCTS, FEATURED_PRODUCT_IDS } from '../../src/lib/products/catalog'
 import { getActiveOrUpcomingDrop } from '../../src/lib/drops/registry'
+import { getDropState } from '../../src/lib/drops/state'
 import { BraceletCard } from '../../src/components/ui/BraceletCard'
 import { Button } from '../../src/components/ui/Button'
 
@@ -16,7 +17,8 @@ const CATEGORIES = [
 ]
 
 export default function HomeScreen() {
-  const activeDrop = getActiveOrUpcomingDrop()
+  const activeDrop     = getActiveOrUpcomingDrop()
+  const activeDropStatus = activeDrop ? getDropState(activeDrop.launchDate, activeDrop.stock) : null
   const featuredProducts = ALL_PRODUCTS.filter(p => FEATURED_PRODUCT_IDS.includes(p.id))
 
   return (
@@ -43,7 +45,7 @@ export default function HomeScreen() {
           >
             <View>
               <Text className="text-white text-xs font-semibold uppercase tracking-wider">
-                {activeDrop.status === 'live' ? '🔴 LIVE NOW' : '⏰ Coming Soon'}
+                {activeDropStatus === 'live' ? '🔴 LIVE NOW' : '⏰ Coming Soon'}
               </Text>
               <Text className="text-white text-lg font-bold mt-0.5">{activeDrop.name}</Text>
               <Text className="text-white/80 text-sm">{activeDrop.theme}</Text>
