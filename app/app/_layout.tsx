@@ -7,7 +7,22 @@ import { StripeProvider } from '@stripe/stripe-react-native'
 import { useFonts } from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
 import Ionicons from '@expo/vector-icons/Ionicons'
+import * as Sentry from '@sentry/react-native'
+import { PostHogProvider } from 'posthog-react-native'
 import { AuthProvider } from '../src/context/AuthContext'
+
+const SENTRY_DSN     = process.env.EXPO_PUBLIC_SENTRY_DSN
+const POSTHOG_KEY    = process.env.EXPO_PUBLIC_POSTHOG_KEY
+const POSTHOG_HOST   = process.env.EXPO_PUBLIC_POSTHOG_HOST ?? 'https://app.posthog.com'
+
+if (SENTRY_DSN) {
+  Sentry.init({
+    dsn:              SENTRY_DSN,
+    tracesSampleRate: 0.1,
+    // Disable in development — avoids noise during local builds
+    enabled: !__DEV__,
+  })
+}
 
 SplashScreen.preventAutoHideAsync()
 
@@ -24,7 +39,7 @@ export default function RootLayout() {
 
   if (!fontsLoaded) return null
 
-  return (
+  const inner = (
     <SafeAreaProvider>
       <AuthProvider>
         <StripeProvider publishableKey={STRIPE_PUBLISHABLE_KEY} merchantIdentifier="merchant.com.chiccharmco.app">
@@ -46,5 +61,13 @@ export default function RootLayout() {
         </StripeProvider>
       </AuthProvider>
     </SafeAreaProvider>
+  )
+
+  if (!POSTHOG_KEY) return inner
+
+  return (
+    <PostHogProvider apiKey={POSTHOG_KEY} options={{ host: POSTHOG_HOST }}>
+      {inner}
+    </PostHogProvider>
   )
 }

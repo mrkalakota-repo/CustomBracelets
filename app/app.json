@@ -16,6 +16,9 @@
       "supportsTablet": false,
       "bundleIdentifier": "com.chiccharmco.app",
       "buildNumber": "1",
+      "infoPlist": {
+        "NSPrivacyPolicyURL": "https://chiccharmco.com/privacy-policy"
+      },
       "privacyManifests": {
         "NSPrivacyAccessedAPITypes": []
       }
@@ -48,7 +51,8 @@
           "merchantIdentifier": "merchant.com.chiccharmco.app",
           "enableGooglePay": true
         }
-      ]
+      ],
+      "@sentry/react-native/expo"
     ],
     "experiments": {
       "typedRoutes": true
