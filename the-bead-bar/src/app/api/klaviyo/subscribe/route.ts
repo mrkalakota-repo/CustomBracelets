@@ -37,7 +37,7 @@ export async function POST(req: Request) {
     if (!listId) {
       return NextResponse.json({ error: `List ID for "${type}" is not configured` }, { status: 503 })
     }
-    await subscribeToList({ email, listId, source: dropId ? `drop:${dropId}` : 'website' })
+    await subscribeToList({ email, listId })
 
     return NextResponse.json({ success: true })
   } catch (err) {

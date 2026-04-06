@@ -3,9 +3,8 @@ import { env } from '@/lib/env'
 const KLAVIYO_API_URL = 'https://a.klaviyo.com/api'
 
 interface SubscribePayload {
-  email:   string
-  listId:  string
-  source?: string
+  email:  string
+  listId: string
 }
 
 interface OrderPayload {
@@ -16,7 +15,7 @@ interface OrderPayload {
   items:      { name: string; price: number; quantity: number }[]
 }
 
-export async function subscribeToList({ email, listId, source }: SubscribePayload): Promise<void> {
+export async function subscribeToList({ email, listId }: SubscribePayload): Promise<void> {
   const apiKey = env.KLAVIYO_API_KEY
 
   const res = await fetch(`${KLAVIYO_API_URL}/profile-subscription-bulk-create-jobs/`, {
@@ -32,7 +31,7 @@ export async function subscribeToList({ email, listId, source }: SubscribePayloa
         type: 'profile-subscription-bulk-create-job',
         attributes: {
           profiles: {
-            data: [{ type: 'profile', attributes: { email, source: source ?? 'website' } }],
+            data: [{ type: 'profile', attributes: { email } }],
           },
         },
         relationships: {
