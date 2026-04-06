@@ -7,6 +7,7 @@ import { CartErrorBoundary } from "@/components/CartErrorBoundary";
 import { PwaInit } from "@/components/PwaInit";
 import { Nav } from "@/components/Nav";
 import { CookieBanner } from "@/components/CookieBanner/CookieBanner";
+import { PostHogProvider } from "@/components/Analytics/PostHogProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,16 +41,18 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <CartErrorBoundary>
-          <AuthProvider>
-            <CartProvider>
-              <PwaInit />
-              <Nav />
-              {children}
-              <CookieBanner />
-            </CartProvider>
-          </AuthProvider>
-        </CartErrorBoundary>
+        <PostHogProvider>
+          <CartErrorBoundary>
+            <AuthProvider>
+              <CartProvider>
+                <PwaInit />
+                <Nav />
+                {children}
+                <CookieBanner />
+              </CartProvider>
+            </AuthProvider>
+          </CartErrorBoundary>
+        </PostHogProvider>
       </body>
     </html>
   );

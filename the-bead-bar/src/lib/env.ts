@@ -6,6 +6,14 @@ const EnvSchema = z.object({
   KLAVIYO_DROP_LIST_ID:      z.string().optional(),
   KLAVIYO_WAITLIST_LIST_ID:  z.string().optional(),
   KLAVIYO_MARKETING_LIST_ID: z.string().optional(),
+  // Optional — error tracking. Set to enable Sentry on the server.
+  SENTRY_DSN:                z.string().optional(),
+  SENTRY_AUTH_TOKEN:         z.string().optional(),
+  SENTRY_ORG:                z.string().optional(),
+  SENTRY_PROJECT:            z.string().optional(),
+  // Optional — analytics. Set to enable PostHog server-side event tracking.
+  POSTHOG_API_KEY:           z.string().optional(),
+  POSTHOG_HOST:              z.string().optional(),
 })
 
 type Env = z.infer<typeof EnvSchema>
