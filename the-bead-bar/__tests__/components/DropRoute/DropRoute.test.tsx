@@ -9,6 +9,8 @@ const UPCOMING_DROP = {
   launchDate:      new Date(Date.now() + 1000 * 60 * 60 * 2),
   stock:           20,
   previewImageUrl: '/images/drops/spring-bloom.jpg',
+  productIds:      ['1', '2'],
+  socialCopy:      'Spring is here 🌸 New drop April 15',
 }
 
 const LIVE_DROP = {

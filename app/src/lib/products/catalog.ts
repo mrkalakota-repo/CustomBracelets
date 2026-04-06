@@ -52,7 +52,7 @@ export const ALL_PRODUCTS: Product[] = [
     price:       15,
     imageUrl:    'rose-charm',
     occasion:    'valentines',
-    description: 'Dusty rose cord with a sterling silver heart charm.',
+    description: 'Dusty rose cord with a sterling silver heart charm. A sweet gift for someone special.',
   },
 ]
 
