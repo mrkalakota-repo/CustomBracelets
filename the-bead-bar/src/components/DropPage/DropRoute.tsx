@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 import { DropPage } from './DropPage'
 import { getDropState } from '@/lib/drops/state'
@@ -20,6 +22,30 @@ export function DropRoute({ drop }: DropRouteProps) {
 
   const state = getDropState(drop.launchDate, drop.stock)
 
+  async function handleNotify(email: string) {
+    const res = await fetch('/api/klaviyo/subscribe', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ email, type: 'drop', dropId: drop.id }),
+    })
+    if (!res.ok) {
+      const { error } = await res.json().catch(() => ({ error: 'Subscription failed' }))
+      throw new Error(error ?? 'Subscription failed')
+    }
+  }
+
+  async function handleWaitlist(email: string) {
+    const res = await fetch('/api/klaviyo/subscribe', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ email, type: 'waitlist', dropId: drop.id }),
+    })
+    if (!res.ok) {
+      const { error } = await res.json().catch(() => ({ error: 'Subscription failed' }))
+      throw new Error(error ?? 'Subscription failed')
+    }
+  }
+
   return (
     <DropPage
       drop={{
@@ -31,6 +57,8 @@ export function DropRoute({ drop }: DropRouteProps) {
       }}
       state={state}
       stock={drop.stock}
+      onNotifySubmit={handleNotify}
+      onWaitlistSubmit={handleWaitlist}
     />
   )
 }
