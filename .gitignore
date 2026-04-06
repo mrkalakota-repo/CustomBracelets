@@ -40,6 +40,9 @@ build/
 .DS_Store
 Thumbs.db
 
+# Supabase CLI local state
+supabase/.temp/
+
 # IDE
 .vscode/
 .idea/
