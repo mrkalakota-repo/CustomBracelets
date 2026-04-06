@@ -20,13 +20,14 @@ export function DropRoute({ drop }: DropRouteProps) {
     )
   }
 
-  const state = getDropState(drop.launchDate, drop.stock)
+  const state  = getDropState(drop.launchDate, drop.stock)
+  const dropId = drop.id  // capture before async closures to satisfy TypeScript narrowing
 
   async function handleNotify(email: string) {
     const res = await fetch('/api/klaviyo/subscribe', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ email, type: 'drop', dropId: drop.id }),
+      body:    JSON.stringify({ email, type: 'drop', dropId }),
     })
     if (!res.ok) {
       const { error } = await res.json().catch(() => ({ error: 'Subscription failed' }))
@@ -38,7 +39,7 @@ export function DropRoute({ drop }: DropRouteProps) {
     const res = await fetch('/api/klaviyo/subscribe', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ email, type: 'waitlist', dropId: drop.id }),
+      body:    JSON.stringify({ email, type: 'waitlist', dropId }),
     })
     if (!res.ok) {
       const { error } = await res.json().catch(() => ({ error: 'Subscription failed' }))
