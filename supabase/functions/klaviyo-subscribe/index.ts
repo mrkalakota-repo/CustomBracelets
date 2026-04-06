@@ -56,8 +56,6 @@ Deno.serve(async (req: Request) => {
     return json({ error: 'Subscription failed' }, 500)
   }
 
-  const source = typeof dropId === 'string' ? `drop:${dropId}` : 'app'
-
   const res = await fetch(`${KLAVIYO_API_URL}/profile-subscription-bulk-create-jobs/`, {
     method:  'POST',
     headers: {
@@ -71,7 +69,7 @@ Deno.serve(async (req: Request) => {
         type: 'profile-subscription-bulk-create-job',
         attributes: {
           profiles: {
-            data: [{ type: 'profile', attributes: { email, source } }],
+            data: [{ type: 'profile', attributes: { email } }],
           },
         },
         relationships: {
