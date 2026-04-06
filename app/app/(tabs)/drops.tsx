@@ -71,13 +71,17 @@ function NotifyMeForm({ drop }: NotifyMeFormProps) {
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({ email, dropId: drop.id }),
       })
-      if (!res.ok) throw new Error('Subscription failed')
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({})) as { message?: string }
+        throw new Error(body.message ?? `Server error (${res.status})`)
+      }
       Alert.alert('You\u2019re on the list! \uD83C\uDF38', `We\u2019ll notify ${email} when ${drop.name} drops.`)
       setEmail('')
       setAgeConfirmed(false)
       setMarketingConsent(false)
-    } catch {
-      Alert.alert('Something went wrong', 'Please try again.')
+    } catch (err) {
+      const detail = err instanceof Error ? err.message : 'Please try again.'
+      Alert.alert('Could not subscribe', detail)
     } finally {
       setLoading(false)
     }

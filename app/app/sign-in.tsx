@@ -12,7 +12,7 @@ type Mode = 'signin' | 'signup'
 const PIN_LENGTH = 6
 
 export default function SignInScreen() {
-  const { signInWithPhone, signUpWithPhone } = useAuth()
+  const { signInWithPhone, signUpWithPhone, forgotPin } = useAuth()
 
   const [mode, setMode]               = useState<Mode>('signin')
   const [phone, setPhone]             = useState('')
@@ -300,6 +300,18 @@ export default function SignInScreen() {
 
           {mode === 'signin' && (
             <TouchableOpacity
+              onPress={async () => {
+                if (rawPhone().length < 10) {
+                  Alert.alert('Enter your phone number', 'Please enter your phone number above so we can send you a reset code.')
+                  return
+                }
+                const { error } = await forgotPin(phone)
+                if (error) {
+                  Alert.alert('Could not send code', error)
+                  return
+                }
+                router.push({ pathname: '/verify-phone', params: { phone, mode: 'reset-pin' } })
+              }}
               className="items-center py-2"
               accessibilityRole="button"
               accessibilityLabel="Forgot PIN"

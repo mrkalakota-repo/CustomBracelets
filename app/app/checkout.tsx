@@ -4,6 +4,7 @@ import { router } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useStripe } from '@stripe/stripe-react-native'
 import { useCartStore } from '../src/store/cart'
+import { useLastOrderStore } from '../src/store/lastOrder'
 import { Button } from '../src/components/ui/Button'
 import type { BaseStyle } from '../src/lib/builder/compatibility'
 
@@ -72,6 +73,7 @@ function AgeGate({ onConfirm }: { onConfirm: () => void }) {
 
 export default function CheckoutScreen() {
   const { items, total } = useCartStore()
+  const setLastOrder = useLastOrderStore(s => s.setOrder)
   const { initPaymentSheet, presentPaymentSheet } = useStripe()
 
   const cartTotal    = total()
@@ -96,8 +98,10 @@ export default function CheckoutScreen() {
         baseStyle: item.isCustom
           ? (item.baseStyle ?? 'beaded')
           : PRODUCT_TYPE_TO_BASE[item.product?.type ?? 'beaded'] ?? 'beaded',
-        quantity: item.quantity,
-        addOns:   item.addOns ?? {},
+        quantity:  item.quantity,
+        addOns:    item.addOns ?? {},
+        // productId enables server-side stock pre-flight check for catalog items
+        ...(item.product?.id ? { productId: item.product.id } : {}),
       }))
 
       const res = await fetch(`${API_BASE}/checkout`, {
@@ -154,9 +158,10 @@ export default function CheckoutScreen() {
       return
     }
 
-    // Do NOT clearCart() here. The cart is cleared on the order-confirmation
-    // screen so that if something goes wrong before the user lands there
-    // (crash, nav failure) the cart is still intact and recoverable.
+    // Snapshot cart for the order-confirmation screen before clearing.
+    // Do NOT clearCart() here — the cart is cleared on order-confirmation so
+    // that if something goes wrong before the user lands there the cart survives.
+    setLastOrder(items, grandTotal)
     router.replace('/order-confirmation')
   }
 

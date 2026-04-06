@@ -10,6 +10,7 @@ interface AuthContextType {
   signUpWithPhone:  (phone: string, pin: string, name: string) => Promise<{ error: string | null; needsVerification: boolean }>
   verifyOtp:        (phone: string, token: string) => Promise<{ error: string | null }>
   resendOtp:        (phone: string) => Promise<{ error: string | null }>
+  forgotPin:        (phone: string) => Promise<{ error: string | null }>
   signOut:          () => Promise<void>
 }
 
@@ -67,6 +68,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error: error?.message ?? null }
   }
 
+  async function forgotPin(phone: string) {
+    const e164 = toE164(phone)
+    // Send a one-time SMS code — user verifies on the verify-phone screen,
+    // which then sets a new PIN via the standard signUp flow.
+    const { error } = await supabase.auth.signInWithOtp({ phone: e164 })
+    return { error: error?.message ?? null }
+  }
+
   async function signOut() {
     await supabase.auth.signOut()
   }
@@ -80,6 +89,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signUpWithPhone,
       verifyOtp,
       resendOtp,
+      forgotPin,
       signOut,
     }}>
       {children}

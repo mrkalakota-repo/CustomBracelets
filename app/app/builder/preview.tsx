@@ -14,13 +14,21 @@ export default function BuilderPreview() {
   const addToCart = useCartStore(s => s.addCustom)
 
   const addOns = (builder.addOns as AddOns) ?? {}
-  const [price, setPrice] = useState(builder.baseStyle ? calculatePriceLocal(builder.baseStyle, addOns) : 0)
+  const [price, setPrice]               = useState(builder.baseStyle ? calculatePriceLocal(builder.baseStyle, addOns) : 0)
+  const [isPricingOffline, setOffline]  = useState(false)
 
   useEffect(() => {
     async function updatePrice() {
-      if (builder.baseStyle) {
+      if (!builder.baseStyle) return
+      try {
         const serverPrice = await calculatePrice(builder.baseStyle, addOns)
         setPrice(serverPrice)
+        setOffline(false)
+      } catch {
+        // calculatePrice falls back to local internally on RPC error, but we
+        // still need to catch network-level throws here and flag offline mode.
+        setPrice(calculatePriceLocal(builder.baseStyle, addOns))
+        setOffline(true)
       }
     }
     updatePrice()
@@ -74,6 +82,11 @@ export default function BuilderPreview() {
             <Text className="text-gray-400 text-sm capitalize">{builder.accentPattern?.replace('-', ' ')} pattern</Text>
           )}
           <Text className="text-sage-dark text-3xl font-bold mt-4">${price}</Text>
+          {isPricingOffline && (
+            <Text className="text-amber-500 text-xs mt-1 text-center">
+              Estimated price (offline) — confirmed at checkout
+            </Text>
+          )}
         </View>
 
         {/* Summary */}

@@ -9,7 +9,7 @@ const comingSoon = (label: string) => () =>
   Alert.alert(label, 'This feature is coming soon!')
 
 const MENU_ITEMS = [
-  { icon: '📦', label: 'Order History',    onPress: comingSoon('Order History'),              available: false },
+  { icon: '📦', label: 'Order History',    onPress: () => router.push('/orders'),             available: true  },
   { icon: '❤️', label: 'Wishlist',         onPress: comingSoon('Wishlist'),                   available: false },
   { icon: '🔔', label: 'Drop Alerts',      onPress: comingSoon('Drop Alerts'),                available: false },
   { icon: '🚚', label: 'Shipping Policy',  onPress: () => router.push('/shipping-policy'),    available: true  },

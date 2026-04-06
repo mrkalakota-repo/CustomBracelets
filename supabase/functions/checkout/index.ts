@@ -1,4 +1,14 @@
 import Stripe from 'https://esm.sh/stripe@14?target=deno'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2?target=deno'
+
+// Supabase client (service role — needed for direct inventory reads)
+// SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are injected automatically by the
+// Supabase Edge Functions runtime; no manual secret configuration required.
+const supabaseUrl        = Deno.env.get('SUPABASE_URL') ?? ''
+const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+const supabase           = supabaseUrl && supabaseServiceKey
+  ? createClient(supabaseUrl, supabaseServiceKey)
+  : null
 
 // ── Pricing (kept in sync with app/src/lib/builder/pricing.ts) ───────────────
 
@@ -42,10 +52,11 @@ function shippingCost(subtotal: number): number {
 // ── Validation ────────────────────────────────────────────────────────────────
 
 interface CartItem {
-  id:        string
-  baseStyle: string
-  quantity:  number
-  addOns?:   AddOns
+  id:         string
+  baseStyle:  string
+  quantity:   number
+  addOns?:    AddOns
+  productId?: string  // present for catalog products; absent for custom bracelets
 }
 
 function validateItem(item: unknown): item is CartItem {
@@ -168,6 +179,37 @@ Deno.serve(async (req: Request) => {
   }
 
   const validItems = items as CartItem[]
+
+  // ── Stock pre-flight check ────────────────────────────────────────────────────
+  // For catalog products (productId present), verify stock > 0 before charging.
+  // This is a fast-fail read-only check; the authoritative decrement happens in
+  // the stripe-webhook after payment_intent.succeeded. The webhook already checks
+  // the decrement return value and logs an oversell alert.
+  if (supabase) {
+    const catalogIds = validItems
+      .filter(i => i.productId)
+      .map(i => ({ productId: i.productId!, quantity: i.quantity }))
+
+    for (const { productId, quantity } of catalogIds) {
+      const { data: drop, error } = await supabase
+        .from('drops')
+        .select('stock')
+        .contains('product_ids', [productId])
+        .single()
+
+      if (error && error.code !== 'PGRST116') {
+        // PGRST116 = no rows; product not associated with a drop — skip check
+        console.warn('[checkout] stock check error for productId', productId, error.message)
+        continue
+      }
+
+      if (drop && drop.stock < quantity) {
+        return json({ error: 'One or more items are out of stock' }, 409, origin)
+      }
+    }
+  } else {
+    console.warn('[checkout] Supabase client unavailable — skipping stock pre-flight check')
+  }
 
   // Recalculate prices server-side — never trust client-supplied prices
   const subtotal = validItems.reduce((sum, item) => {

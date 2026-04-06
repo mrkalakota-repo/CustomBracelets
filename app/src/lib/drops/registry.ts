@@ -17,7 +17,7 @@ export const ALL_DROPS: Drop[] = [
     name:         'Spring Bloom',
     theme:        'Pastel florals, fresh starts, friendship',
     launchDate:   '2026-04-15T12:00:00Z',
-    stock:        100,
+    stock:        20,
     productIds:   ['1', '2'],
     sneakPeekUrl: '',
     socialCopy:   'Spring is here 🌸 New drop April 15',

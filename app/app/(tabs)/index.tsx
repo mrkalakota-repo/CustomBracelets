@@ -37,8 +37,8 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* Active Drop Strip */}
-        {activeDrop && (
+        {/* Drop Strip — active drop or "next drop" teaser */}
+        {activeDrop ? (
           <TouchableOpacity
             onPress={() => router.push('/(tabs)/drops')}
             className="mx-4 mb-4 bg-sage rounded-2xl p-4 flex-row items-center justify-between"
@@ -51,6 +51,18 @@ export default function HomeScreen() {
               <Text className="text-white/80 text-sm">{activeDrop.theme}</Text>
             </View>
             <Text className="text-white text-2xl">→</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            onPress={() => router.push('/(tabs)/drops')}
+            className="mx-4 mb-4 bg-cream-dark rounded-2xl p-4 flex-row items-center justify-between"
+          >
+            <View>
+              <Text className="text-gray-500 text-xs font-semibold uppercase tracking-wider">Next Drop</Text>
+              <Text className="text-gray-800 text-lg font-bold mt-0.5">Coming Soon</Text>
+              <Text className="text-gray-500 text-sm">Be the first to know — join the list</Text>
+            </View>
+            <Text className="text-sage-dark text-2xl">→</Text>
           </TouchableOpacity>
         )}
 
