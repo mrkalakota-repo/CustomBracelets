@@ -9,6 +9,9 @@ alter table public.inventory
 -- 2. Replace decrement_inventory with a safe conditional version.
 --    Returns TRUE if decrement succeeded, FALSE if stock was insufficient.
 --    The caller (stripe-webhook) should treat FALSE as an oversell signal.
+--    Drop first because the return type changed (void → boolean).
+drop function if exists public.decrement_inventory(text, integer);
+
 create or replace function public.decrement_inventory(item_id text, amount int)
 returns boolean as $$
 declare
