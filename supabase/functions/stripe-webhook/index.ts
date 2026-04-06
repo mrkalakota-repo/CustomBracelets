@@ -85,6 +85,62 @@ Deno.serve(async (req) => {
 
   console.log(`[stripe-webhook] Processing event: ${event.type}`)
 
+  // ── charge.refunded — restore inventory ──────────────────────────────────────
+  if (event.type === 'charge.refunded') {
+    const charge = event.data.object as Stripe.Charge
+    const piId   = typeof charge.payment_intent === 'string' ? charge.payment_intent : null
+    if (!piId) {
+      return new Response(JSON.stringify({ received: true }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+
+    // Look up the order to get its items
+    const { data: order } = await supabase
+      .from('orders')
+      .select('id')
+      .eq('stripe_payment_intent_id', piId)
+      .maybeSingle()
+
+    if (!order) {
+      console.warn(`[stripe-webhook] charge.refunded: no order found for pi ${piId}`)
+      return new Response(JSON.stringify({ received: true }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+
+    const { data: orderItems } = await supabase
+      .from('order_items')
+      .select('product_config, quantity')
+      .eq('order_id', order.id)
+
+    if (orderItems && orderItems.length > 0) {
+      for (const item of orderItems) {
+        const baseStyle = (item.product_config as any)?.baseStyle
+        if (!baseStyle || !VALID_BASE_STYLES.has(baseStyle)) continue
+        const { error } = await supabase.rpc('increment_inventory', {
+          item_id: `${baseStyle}-base`,
+          amount:  item.quantity,
+        })
+        if (error) console.error(`[stripe-webhook] Failed to restore inventory for ${baseStyle} on refund:`, error)
+      }
+    }
+
+    // Mark order as refunded
+    await supabase
+      .from('orders')
+      .update({ status: 'refunded' })
+      .eq('id', order.id)
+
+    console.log(`[stripe-webhook] Order ${order.id} marked as refunded`)
+    return new Response(JSON.stringify({ received: true }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  }
+
   if (event.type === 'payment_intent.succeeded') {
     const pi     = event.data.object as Stripe.PaymentIntent
     const userId = pi.metadata.userId ?? null   // null for guest checkout
@@ -156,15 +212,23 @@ Deno.serve(async (req) => {
     // ── Decrement Inventory ───────────────────────────────────────────────────
     for (const item of validItems) {
       const baseStyle = item.baseStyle as string
-      const quantity  = typeof item.quantity === 'number' ? item.quantity : 1
+      const quantity  = typeof item.quantity === 'number' && Number.isInteger(item.quantity) && item.quantity > 0
+        ? item.quantity
+        : 1
+      const itemId = `${baseStyle}-base`
       try {
-        const { error } = await supabase.rpc('decrement_inventory', {
-          item_id: `${baseStyle}-base`,
+        const { data: decremented, error } = await supabase.rpc('decrement_inventory', {
+          item_id: itemId,
           amount:  quantity,
         })
-        if (error) console.error(`[stripe-webhook] Inventory decrement failed for ${baseStyle}:`, error)
+        if (error) {
+          console.error(`[stripe-webhook] Inventory decrement RPC error for ${itemId}:`, error)
+        } else if (!decremented) {
+          // Stock was insufficient — payment already captured, flag for manual reconciliation
+          console.error(`[stripe-webhook] OVERSELL: insufficient stock for ${itemId} (order ${order.id}, pi ${pi.id}) — manual fulfillment required`)
+        }
       } catch (err) {
-        console.error(`[stripe-webhook] Inventory RPC threw for ${baseStyle}:`, err)
+        console.error(`[stripe-webhook] Inventory RPC threw for ${itemId}:`, err)
       }
     }
 
@@ -172,9 +236,12 @@ Deno.serve(async (req) => {
 
     // ── Klaviyo order tracking (best-effort) ──────────────────────────────────
     // pi.receipt_email is null for Apple Pay / Google Pay. Fall back to the
-    // charge's billing_details.email which is populated by those payment methods.
-    const chargeEmail = (pi as any).charges?.data?.[0]?.billing_details?.email ?? null
-    const email = pi.receipt_email ?? chargeEmail
+    // charge's billing_details.email (find the succeeded charge).
+    const succeededCharge = (pi as any).charges?.data?.find((c: any) => c.status === 'succeeded') ?? null
+    const chargeEmail = succeededCharge?.billing_details?.email ?? null
+    const rawEmail = pi.receipt_email ?? chargeEmail
+    const isValidEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s)
+    const email = rawEmail && isValidEmail(rawEmail) ? rawEmail : null
     if (email && validItems.length > 0) {
       await trackKlaviyoOrder({
         email,

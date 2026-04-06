@@ -7,8 +7,12 @@ import { useCartStore } from '../src/store/cart'
 import { Button } from '../src/components/ui/Button'
 import type { BaseStyle } from '../src/lib/builder/compatibility'
 
-// The app calls the website's API routes directly (see CLAUDE.md)
-const API_BASE = process.env.EXPO_PUBLIC_API_BASE_URL ?? 'http://localhost:3000'
+// Supabase Edge Functions base URL — set EXPO_PUBLIC_API_BASE_URL in .env.local
+// Never falls back to localhost in a way that would silently use the wrong endpoint
+const API_BASE = process.env.EXPO_PUBLIC_API_BASE_URL ?? ''
+if (!API_BASE && __DEV__) {
+  console.warn('[checkout] EXPO_PUBLIC_API_BASE_URL is not set — checkout will fail')
+}
 
 // Map catalog product types → BaseStyle for the checkout API.
 // 'stackable' isn't a builder base style; fall back to 'beaded'.

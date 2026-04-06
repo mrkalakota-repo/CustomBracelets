@@ -96,5 +96,8 @@ export function useAuth(): AuthContextType {
 // Convert (555) 000-1234 → +15550001234
 function toE164(formatted: string): string {
   const digits = formatted.replace(/\D/g, '')
+  if (digits.length < 10 || digits.length > 11) {
+    throw new Error('Invalid phone number — must be 10 digits (US)')
+  }
   return digits.startsWith('1') ? `+${digits}` : `+1${digits}`
 }
