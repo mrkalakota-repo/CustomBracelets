@@ -106,48 +106,64 @@ async function rateLimit(key: string, max: number, windowSec: number): Promise<b
   }
 }
 
+// ── CORS ──────────────────────────────────────────────────────────────────────
+//
+// Browser requests from chiccharmco.com are allowed.
+// Native app requests have no Origin header — always allowed (CORS is irrelevant
+// for non-browser clients; the Authorization header provides security there).
+
+const ALLOWED_ORIGINS = [
+  'https://chiccharmco.com',
+  'https://www.chiccharmco.com',
+]
+
+function corsHeaders(origin: string | null): Record<string, string> {
+  const allow = !origin || ALLOWED_ORIGINS.includes(origin) ? (origin ?? '*') : 'null'
+  return {
+    'Access-Control-Allow-Origin':  allow,
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  }
+}
+
 // ── Handler ───────────────────────────────────────────────────────────────────
 
 Deno.serve(async (req: Request) => {
+  const origin = req.headers.get('origin')
+
   // CORS preflight
   if (req.method === 'OPTIONS') {
-    return new Response(null, {
-      headers: {
-        'Access-Control-Allow-Origin':  '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      },
-    })
+    return new Response(null, { headers: corsHeaders(origin) })
   }
 
   if (req.method !== 'POST') {
-    return json({ error: 'Method not allowed' }, 405)
+    return json({ error: 'Method not allowed' }, 405, origin)
   }
 
   const ip = req.headers.get('x-forwarded-for') ?? 'unknown'
   if (!await rateLimit(`checkout:${ip}`, 10, 60)) {
-    return json({ error: 'Too many requests' }, 429)
+    return json({ error: 'Too many requests' }, 429, origin)
   }
 
   let body: unknown
   try {
     body = await req.json()
   } catch {
-    return json({ error: 'Invalid JSON' }, 400)
+    return json({ error: 'Invalid JSON' }, 400, origin)
   }
 
   if (!body || typeof body !== 'object' || !Array.isArray((body as Record<string, unknown>).items)) {
-    return json({ error: 'items array is required' }, 400)
+    return json({ error: 'items array is required' }, 400, origin)
   }
 
   const items = (body as { items: unknown[] }).items
 
-  if (items.length === 0)  return json({ error: 'Cart is empty' }, 400)
-  if (items.length > 20)   return json({ error: 'Too many items' }, 400)
+  if (items.length === 0)  return json({ error: 'Cart is empty' }, 400, origin)
+  if (items.length > 20)   return json({ error: 'Too many items' }, 400, origin)
 
   for (const item of items) {
     if (!validateItem(item)) {
-      return json({ error: 'Invalid cart item' }, 400)
+      return json({ error: 'Invalid cart item' }, 400, origin)
     }
   }
 
@@ -163,7 +179,7 @@ Deno.serve(async (req: Request) => {
   const stripeKey = Deno.env.get('STRIPE_SECRET_KEY')
   if (!stripeKey) {
     console.error('[checkout] STRIPE_SECRET_KEY not set')
-    return json({ error: 'Payment setup failed' }, 500)
+    return json({ error: 'Payment setup failed' }, 500, origin)
   }
 
   try {
@@ -183,19 +199,19 @@ Deno.serve(async (req: Request) => {
       },
     })
 
-    return json({ clientSecret: paymentIntent.client_secret }, 200)
+    return json({ clientSecret: paymentIntent.client_secret }, 200, origin)
   } catch (err) {
     console.error('[checkout] Stripe error:', err)
-    return json({ error: 'Payment setup failed' }, 500)
+    return json({ error: 'Payment setup failed' }, 500, origin)
   }
 })
 
-function json(data: unknown, status: number): Response {
+function json(data: unknown, status: number, origin: string | null = null): Response {
   return new Response(JSON.stringify(data), {
     status,
     headers: {
       'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
+      ...corsHeaders(origin),
     },
   })
 }
