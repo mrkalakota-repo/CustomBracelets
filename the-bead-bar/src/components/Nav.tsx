@@ -10,14 +10,14 @@ export function Nav() {
 
   return (
     <header className="sticky top-0 z-50 bg-cream border-b border-border">
-      <div className="page-container flex items-center justify-between h-14">
+      <div className="page-container flex items-center justify-between h-16">
         {/* Brand */}
-        <Link href="/" className="font-semibold text-text-dark tracking-tight hover:text-sage transition-colors">
+        <Link href="/" className="font-semibold text-lg text-text-dark tracking-tight hover:text-sage transition-colors">
           Chic Charm Co.
         </Link>
 
         {/* Nav links */}
-        <nav className="hidden sm:flex items-center gap-5 text-sm text-text-mid">
+        <nav className="hidden sm:flex items-center gap-5 text-base text-text-mid">
           <Link href="/shop"    className="hover:text-text-dark transition-colors">Shop</Link>
           <Link href="/builder" className="hover:text-text-dark transition-colors">Builder</Link>
           <Link href="/drops/spring-bloom-2026" className="hover:text-text-dark transition-colors">Drops</Link>

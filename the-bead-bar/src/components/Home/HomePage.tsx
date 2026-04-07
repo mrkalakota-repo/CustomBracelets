@@ -50,8 +50,8 @@ export function HomePage({ featuredProducts, activeDrop }: HomePageProps) {
 
 function Hero() {
   return (
-    <section data-testid="hero" className="bg-cream min-h-[60vh] flex flex-col items-center justify-center text-center px-4 py-16 gap-6">
-      <h1 data-testid="hero-headline" className="text-4xl font-semibold tracking-tight">Bracelets made for you.</h1>
+    <section data-testid="hero" className="bg-cream flex flex-col items-center justify-center text-center px-4 py-8 gap-6">
+      <h1 data-testid="hero-headline" className="text-4xl font-semibold tracking-tight">Jewelry made for you.</h1>
       <p className="text-text-mid max-w-xs">Minimalist designs, seasonal drops, and BFF sets — starting at $10.</p>
       <div className="flex gap-3 flex-wrap justify-center">
         <Link href="/shop" className="btn-primary">Shop Now</Link>
