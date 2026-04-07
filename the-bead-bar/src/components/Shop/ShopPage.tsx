@@ -22,9 +22,8 @@ interface ShopPageProps {
 const TYPE_FILTERS = [
   { id: 'all',       label: 'All' },
   { id: 'beaded',    label: 'Beaded' },
-  { id: 'cord',      label: 'Cord' },
+  { id: 'string',    label: 'String' },
   { id: 'chain',     label: 'Chain' },
-  { id: 'charm',     label: 'Charm' },
   { id: 'stackable', label: 'Stackable' },
 ]
 

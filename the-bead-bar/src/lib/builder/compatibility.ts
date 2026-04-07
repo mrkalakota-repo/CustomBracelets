@@ -1,11 +1,10 @@
-export type BaseStyle = 'beaded' | 'cord' | 'chain' | 'charm' | 'stackable'
+export type BaseStyle = 'beaded' | 'string' | 'chain' | 'stackable'
 export type Pattern = string
 
 const COMPATIBLE_PATTERNS: Record<BaseStyle, Pattern[]> = {
   beaded:    ['solid', 'two-tone', 'gradient', 'checker', 'stripe'],
-  cord:      ['solid', 'knotted', 'braided', 'dip-dye'],
+  string:    ['solid', 'knotted', 'braided', 'dip-dye'],
   chain:     ['plain', 'twisted'],
-  charm:     [],
   stackable: ['solid', 'two-tone', 'gradient', 'checker', 'stripe', 'knotted', 'braided'],
 }
 

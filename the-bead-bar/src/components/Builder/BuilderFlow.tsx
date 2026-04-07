@@ -45,8 +45,7 @@ export function BuilderFlow({ isBff = false, onAddToCart }: BuilderFlowProps) {
     // avoid the stale-closure bug where state.baseStyle hasn't committed yet.
     setState(s => {
       const next = { ...s, primaryColor: color }
-      // charm has no patterns — skip to add-ons
-      setStep(s.baseStyle === 'charm' ? 4 : 3)
+      setStep(3)
       return next
     })
   }
@@ -111,7 +110,7 @@ export function BuilderFlow({ isBff = false, onAddToCart }: BuilderFlowProps) {
       setStep(2)
     } else if (step === 4) {
       setState(s => ({ ...s, accentPattern: null, addOns: {} }))
-      setStep(state.baseStyle === 'charm' ? 2 : 3)
+      setStep(3)
     } else if (step === 5) {
       setState(s => ({ ...s, addOns: {} }))
       setStep(4)

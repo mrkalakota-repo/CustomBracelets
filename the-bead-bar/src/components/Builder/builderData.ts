@@ -2,9 +2,8 @@ import type { BaseStyle } from '@/lib/builder/compatibility'
 
 export const BASE_STYLES: { id: BaseStyle; label: string }[] = [
   { id: 'beaded',    label: 'Beaded' },
-  { id: 'cord',      label: 'Cord' },
+  { id: 'string',    label: 'String' },
   { id: 'chain',     label: 'Chain' },
-  { id: 'charm',     label: 'Charm' },
   { id: 'stackable', label: 'Stackable' },
 ]
 
@@ -27,7 +26,7 @@ export const PATTERNS: Record<BaseStyle, { id: string; label: string }[]> = {
     { id: 'checker',  label: 'Checker' },
     { id: 'stripe',   label: 'Stripe' },
   ],
-  cord:      [
+  string:    [
     { id: 'solid',   label: 'Solid' },
     { id: 'knotted', label: 'Knotted' },
     { id: 'braided', label: 'Braided' },
@@ -37,7 +36,6 @@ export const PATTERNS: Record<BaseStyle, { id: string; label: string }[]> = {
     { id: 'plain',   label: 'Plain' },
     { id: 'twisted', label: 'Twisted' },
   ],
-  charm:     [],
   stackable: [
     { id: 'solid',    label: 'Solid' },
     { id: 'two-tone', label: 'Two-Tone' },

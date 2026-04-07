@@ -2,9 +2,8 @@ import type { BaseStyle } from './compatibility'
 
 export const BASE_PRICES: Record<BaseStyle, number> = {
   beaded:    12,
-  cord:      10,
+  string:    10,
   chain:     18,
-  charm:     15,
   stackable: 25,
 }
 

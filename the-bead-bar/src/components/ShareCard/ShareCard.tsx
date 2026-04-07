@@ -40,9 +40,8 @@ const DISPLAY_LABELS: Record<string, string> = {
   'twisted':     'Twisted',
   // Base styles
   'beaded':      'Beaded',
-  'cord':        'Cord',
+  'string':      'String',
   'chain':       'Chain',
-  'charm':       'Charm',
   'stackable':   'Stackable',
   // Charms
   'star':        'Star',

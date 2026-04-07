@@ -20,8 +20,8 @@ export const ALL_PRODUCTS: Product[] = [
   },
   {
     id:          '2',
-    name:        'Cream Cord Bracelet',
-    type:        'cord',
+    name:        'Cream String Bracelet',
+    type:        'string',
     price:       10,
     imageUrl:    '/images/cream-cord.svg',
     occasion:    'everyday',
@@ -47,8 +47,8 @@ export const ALL_PRODUCTS: Product[] = [
   },
   {
     id:          '5',
-    name:        'Rose Charm Bracelet',
-    type:        'charm',
+    name:        'Rose String Bracelet',
+    type:        'string',
     price:       15,
     imageUrl:    '/images/rose-charm.svg',
     occasion:    'valentines',

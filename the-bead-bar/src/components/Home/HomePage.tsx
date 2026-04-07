@@ -26,9 +26,8 @@ interface HomePageProps {
 
 const CATEGORIES = [
   { id: 'beaded',    label: 'Beaded',    emoji: '📿' },
-  { id: 'cord',      label: 'Cord',      emoji: '🧵' },
+  { id: 'string',    label: 'String',    emoji: '🧵' },
   { id: 'chain',     label: 'Chain',     emoji: '⛓️'  },
-  { id: 'charm',     label: 'Charm',     emoji: '✨' },
   { id: 'stackable', label: 'Stackable', emoji: '💫' },
 ]
 
@@ -65,8 +64,8 @@ function Hero() {
 
 function DropStrip({ drop }: { drop: ActiveDrop }) {
   return (
-    <div data-testid="drop-strip" className="bg-sage text-white flex items-center justify-center gap-3 py-2 px-4 text-sm font-medium">
-      <span className="font-semibold">{drop.name}</span>
+    <div data-testid="drop-strip" className="bg-sage text-white flex items-center justify-center gap-3 py-3 px-4 text-sm font-medium">
+      <span className="text-base font-bold tracking-wide">{drop.name}</span>
       {drop.state === DropState.LIVE ? (
         <span className="badge-live">Live Now</span>
       ) : (
