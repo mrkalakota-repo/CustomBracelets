@@ -4,7 +4,7 @@ import { DropState } from '@/lib/drops/state'
 
 const FEATURED_PRODUCTS = [
   { id: '1', name: 'Sage Beaded',    type: 'beaded',    price: 12, imageUrl: '/img/1.jpg' },
-  { id: '2', name: 'Cream Cord',     type: 'cord',      price: 10, imageUrl: '/img/2.jpg' },
+  { id: '2', name: 'Cream String',   type: 'string',      price: 10, imageUrl: '/img/2.jpg' },
   { id: '3', name: 'Gold Chain',     type: 'chain',     price: 18, imageUrl: '/img/3.jpg' },
   { id: '4', name: 'Charm Stack',    type: 'stackable', price: 25, imageUrl: '/img/4.jpg' },
 ]
@@ -88,7 +88,7 @@ describe('HomePage — Shop by Category', () => {
     render(<HomePage featuredProducts={FEATURED_PRODUCTS} />)
     const cats = screen.getByTestId('categories')
     expect(cats.querySelector('a[href="/shop?type=beaded"]')).toBeInTheDocument()
-    expect(cats.querySelector('a[href="/shop?type=cord"]')).toBeInTheDocument()
+    expect(cats.querySelector('a[href="/shop?type=string"]')).toBeInTheDocument()
     expect(cats.querySelector('a[href="/shop?type=chain"]')).toBeInTheDocument()
     expect(cats.querySelector('a[href="/shop?type=stackable"]')).toBeInTheDocument()
   })
@@ -97,7 +97,7 @@ describe('HomePage — Shop by Category', () => {
     render(<HomePage featuredProducts={FEATURED_PRODUCTS} />)
     const cats = screen.getByTestId('categories')
     expect(cats.querySelector('a[href="/shop?type=beaded"]')).toHaveAttribute('href', '/shop?type=beaded')
-    expect(cats.querySelector('a[href="/shop?type=cord"]')).toHaveAttribute('href', '/shop?type=cord')
+    expect(cats.querySelector('a[href="/shop?type=string"]')).toHaveAttribute('href', '/shop?type=string')
   })
 })
 

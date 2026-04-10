@@ -3,11 +3,13 @@ import { z } from 'zod'
 import { subscribeToList } from '@/lib/klaviyo/client'
 import { rateLimit } from '@/lib/rateLimit'
 import { env } from '@/lib/env'
+import { verifyTurnstileToken } from '@/lib/turnstile'
 
 const SubscribeBodySchema = z.object({
-  email:  z.string().email('Valid email required'),
-  type:   z.enum(['drop', 'waitlist', 'marketing']).default('drop'),
-  dropId: z.string().optional(),
+  email:          z.string().email('Valid email required'),
+  type:           z.enum(['drop', 'waitlist', 'marketing']).default('drop'),
+  dropId:         z.string().optional(),
+  turnstileToken: z.string().optional(),
 })
 
 export async function POST(req: Request) {
@@ -27,7 +29,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 })
     }
 
-    const { email, type, dropId } = parsed.data
+    const { email, type, dropId: _dropId, turnstileToken } = parsed.data
+
+    if (turnstileToken) {
+      const valid = await verifyTurnstileToken(turnstileToken)
+      if (!valid) {
+        return NextResponse.json({ error: 'Bot verification failed. Please try again.' }, { status: 403 })
+      }
+    }
+
     const listIds: Record<string, string | undefined> = {
       drop:      env.KLAVIYO_DROP_LIST_ID,
       waitlist:  env.KLAVIYO_WAITLIST_LIST_ID,

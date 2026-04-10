@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { DropState } from '@/lib/drops/state'
 import { AgeGateForm } from '@/components/AgeGateForm/AgeGateForm'
+import { TurnstileWidget } from '@/components/Turnstile/TurnstileWidget'
 
 interface Drop {
   id:              string
@@ -17,8 +18,8 @@ interface DropPageProps {
   drop:               Drop
   state:              DropState
   stock:              number
-  onNotifySubmit?:    (email: string) => Promise<void> | void
-  onWaitlistSubmit?:  (email: string) => Promise<void> | void
+  onNotifySubmit?:    (email: string, turnstileToken?: string) => Promise<void> | void
+  onWaitlistSubmit?:  (email: string, turnstileToken?: string) => Promise<void> | void
 }
 
 export function DropPage({ drop, state, stock, onNotifySubmit, onWaitlistSubmit }: DropPageProps) {
@@ -98,20 +99,23 @@ function CountdownTimer({ launchDate }: { launchDate: Date }) {
   )
 }
 
-function NotifyMeForm({ onSubmit }: { onSubmit?: (email: string) => Promise<void> | void }) {
-  const [email,           setEmail]           = useState('')
-  const [ageConfirmed,    setAgeConfirmed]    = useState(false)
+function NotifyMeForm({ onSubmit }: { onSubmit?: (email: string, turnstileToken?: string) => Promise<void> | void }) {
+  const [email,            setEmail]            = useState('')
+  const [ageConfirmed,     setAgeConfirmed]     = useState(false)
   const [marketingConsent, setMarketingConsent] = useState(false)
-  const [submitted,       setSubmitted]       = useState(false)
-  const [error,           setError]           = useState<string | null>(null)
+  const [submitted,        setSubmitted]        = useState(false)
+  const [error,            setError]            = useState<string | null>(null)
+  const [turnstileToken,   setTurnstileToken]   = useState<string | null>(null)
 
-  const canSubmit = email.trim().length > 0 && ageConfirmed && marketingConsent
+  const needsTurnstile = !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
+  const canSubmit = email.trim().length > 0 && ageConfirmed && marketingConsent &&
+    (!needsTurnstile || !!turnstileToken)
 
   async function handleSubmit() {
     if (!canSubmit) return
     setError(null)
     try {
-      await onSubmit?.(email.trim())
+      await onSubmit?.(email.trim(), turnstileToken ?? undefined)
       setSubmitted(true)
     } catch {
       setError('Something went wrong. Please try again.')
@@ -145,6 +149,11 @@ function NotifyMeForm({ onSubmit }: { onSubmit?: (email: string) => Promise<void
         />
         I agree to receive marketing emails from Chic Charm Co.. You can unsubscribe at any time.
       </label>
+      <TurnstileWidget
+        onSuccess={setTurnstileToken}
+        onExpire={() => setTurnstileToken(null)}
+        onError={() => setTurnstileToken(null)}
+      />
       {error && <p role="alert" className="text-xs text-red-500">{error}</p>}
       <button
         type="submit"
@@ -182,20 +191,23 @@ function SoldOutView({ onWaitlistSubmit }: { onWaitlistSubmit?: (email: string) 
   )
 }
 
-function WaitlistForm({ onSubmit }: { onSubmit?: (email: string) => Promise<void> | void }) {
+function WaitlistForm({ onSubmit }: { onSubmit?: (email: string, turnstileToken?: string) => Promise<void> | void }) {
   const [email,            setEmail]            = useState('')
   const [ageConfirmed,     setAgeConfirmed]     = useState(false)
   const [marketingConsent, setMarketingConsent] = useState(false)
   const [submitted,        setSubmitted]        = useState(false)
   const [error,            setError]            = useState<string | null>(null)
+  const [turnstileToken,   setTurnstileToken]   = useState<string | null>(null)
 
-  const canSubmit = email.trim().length > 0 && ageConfirmed && marketingConsent
+  const needsTurnstile = !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
+  const canSubmit = email.trim().length > 0 && ageConfirmed && marketingConsent &&
+    (!needsTurnstile || !!turnstileToken)
 
   async function handleSubmit() {
     if (!canSubmit) return
     setError(null)
     try {
-      await onSubmit?.(email.trim())
+      await onSubmit?.(email.trim(), turnstileToken ?? undefined)
       setSubmitted(true)
     } catch {
       setError('Something went wrong. Please try again.')
@@ -229,6 +241,11 @@ function WaitlistForm({ onSubmit }: { onSubmit?: (email: string) => Promise<void
         />
         I agree to receive marketing emails from Chic Charm Co.. You can unsubscribe at any time.
       </label>
+      <TurnstileWidget
+        onSuccess={setTurnstileToken}
+        onExpire={() => setTurnstileToken(null)}
+        onError={() => setTurnstileToken(null)}
+      />
       {error && <p role="alert" className="text-xs text-red-500">{error}</p>}
       <button
         type="submit"

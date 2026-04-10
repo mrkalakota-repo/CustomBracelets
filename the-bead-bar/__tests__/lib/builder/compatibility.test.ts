@@ -8,8 +8,8 @@ describe('getCompatiblePatterns', () => {
     expect(patterns).not.toContain('braided')
   })
 
-  it('returns only cord-compatible patterns for cord base', () => {
-    const patterns = getCompatiblePatterns('cord')
+  it('returns only string-compatible patterns for string base', () => {
+    const patterns = getCompatiblePatterns('string')
     expect(patterns).toEqual(expect.arrayContaining(['solid', 'knotted', 'braided', 'dip-dye']))
     expect(patterns).not.toContain('gradient')
     expect(patterns).not.toContain('checker')
@@ -20,11 +20,6 @@ describe('getCompatiblePatterns', () => {
     expect(patterns).toEqual(expect.arrayContaining(['plain', 'twisted']))
     expect(patterns).not.toContain('braided')
     expect(patterns).not.toContain('dip-dye')
-  })
-
-  it('returns empty patterns for charm base (charm routes to add-ons)', () => {
-    const patterns = getCompatiblePatterns('charm')
-    expect(patterns).toHaveLength(0)
   })
 
   it('throws for unknown base style', () => {
@@ -41,12 +36,12 @@ describe('isValidCombo', () => {
     expect(isValidCombo('beaded', 'knotted')).toBe(false)
   })
 
-  it('accepts cord + braided combo', () => {
-    expect(isValidCombo('cord', 'braided')).toBe(true)
+  it('accepts string + braided combo', () => {
+    expect(isValidCombo('string', 'braided')).toBe(true)
   })
 
-  it('rejects cord + twisted combo', () => {
-    expect(isValidCombo('cord', 'twisted')).toBe(false)
+  it('rejects string + twisted combo', () => {
+    expect(isValidCombo('string', 'twisted')).toBe(false)
   })
 })
 

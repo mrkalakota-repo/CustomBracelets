@@ -11,9 +11,9 @@ describe('BuilderFlow — Step Navigation', () => {
   it('shows all base style options in step 1', () => {
     render(<BuilderFlow />)
     expect(screen.getByRole('button', { name: /beaded/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /cord/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /string/i })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /chain/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /charm/i })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /charm/i })).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: /stackable/i })).toBeInTheDocument()
   })
 
@@ -72,9 +72,9 @@ describe('BuilderFlow — Step Indicator', () => {
 })
 
 describe('BuilderFlow — Compatibility Enforcement', () => {
-  it('only shows cord-compatible patterns after selecting cord base', () => {
+  it('only shows string-compatible patterns after selecting string base', () => {
     render(<BuilderFlow />)
-    fireEvent.click(screen.getByRole('button', { name: /cord/i }))
+    fireEvent.click(screen.getByRole('button', { name: /string/i }))
     fireEvent.click(screen.getAllByRole('button')[0]) // first color
     expect(screen.getByRole('button', { name: /knotted/i })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /braided/i })).toBeInTheDocument()
@@ -89,12 +89,7 @@ describe('BuilderFlow — Compatibility Enforcement', () => {
     expect(screen.queryByRole('button', { name: /knotted/i })).not.toBeInTheDocument()
   })
 
-  it('skips pattern step and goes straight to add-ons for charm base', () => {
-    render(<BuilderFlow />)
-    fireEvent.click(screen.getByRole('button', { name: /charm/i }))
-    fireEvent.click(screen.getAllByRole('button')[0])
-    expect(screen.getByTestId('step-4')).toBeInTheDocument()
-  })
+
 })
 
 describe('BuilderFlow — Step Reset', () => {
@@ -105,8 +100,8 @@ describe('BuilderFlow — Step Reset', () => {
     fireEvent.click(screen.getByRole('button', { name: /back/i }))
     fireEvent.click(screen.getByRole('button', { name: /back/i }))
     // Back at step 1 — changing base should clear color/pattern
-    fireEvent.click(screen.getByRole('button', { name: /cord/i }))
-    // Step 2 now shows cord colors — no previously selected state leaking
+    fireEvent.click(screen.getByRole('button', { name: /string/i }))
+    // Step 2 now shows string colors — no previously selected state leaking
     expect(screen.getByTestId('step-2')).toBeInTheDocument()
   })
 })

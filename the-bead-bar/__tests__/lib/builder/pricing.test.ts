@@ -3,9 +3,8 @@ import { calculatePrice, BASE_PRICES, ADDON_PRICES } from '@/lib/builder/pricing
 describe('BASE_PRICES', () => {
   it('defines prices for all bracelet types', () => {
     expect(BASE_PRICES.beaded).toBe(12)
-    expect(BASE_PRICES.cord).toBe(10)
+    expect(BASE_PRICES.string).toBe(10)
     expect(BASE_PRICES.chain).toBe(18)
-    expect(BASE_PRICES.charm).toBe(15)
     expect(BASE_PRICES.stackable).toBe(25)
   })
 })
@@ -13,7 +12,7 @@ describe('BASE_PRICES', () => {
 describe('calculatePrice', () => {
   it('returns base price with no add-ons', () => {
     expect(calculatePrice('beaded', {})).toBe(12)
-    expect(calculatePrice('cord', {})).toBe(10)
+    expect(calculatePrice('string', {})).toBe(10)
     expect(calculatePrice('chain', {})).toBe(18)
   })
 
@@ -22,7 +21,7 @@ describe('calculatePrice', () => {
   })
 
   it('adds text engraving price when text selected', () => {
-    expect(calculatePrice('cord', { text: 'BFF' })).toBe(10 + ADDON_PRICES.text)
+    expect(calculatePrice('string', { text: 'BFF' })).toBe(10 + ADDON_PRICES.text)
   })
 
   it('adds gift wrap price when gift wrap selected', () => {
@@ -45,7 +44,7 @@ describe('calculatePrice', () => {
   })
 
   it('never returns a negative price', () => {
-    expect(calculatePrice('cord', {})).toBeGreaterThan(0)
+    expect(calculatePrice('string', {})).toBeGreaterThan(0)
   })
 })
 
@@ -62,9 +61,8 @@ describe('Pricing parity — cross-platform constants', () => {
   // and BASE_PRICES in supabase/functions/checkout/index.ts
   const CROSS_PLATFORM_BASE: Record<string, number> = {
     beaded:    12,
-    cord:      10,
+    string:    10,
     chain:     18,
-    charm:     15,
     stackable: 25,
   }
 

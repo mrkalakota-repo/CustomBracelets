@@ -65,8 +65,8 @@ describe('ShareCard — Content', () => {
     expect(screen.queryByTestId('card-text')).not.toBeInTheDocument()
   })
 
-  it('does not render pattern label for charm base (no pattern step)', () => {
-    const selection = { ...BASE_SELECTION, baseStyle: 'charm' as const, accentPattern: null }
+  it('does not render pattern label when accentPattern is null', () => {
+    const selection = { ...BASE_SELECTION, accentPattern: null }
     render(<ShareCard selection={selection} brandUrl={BRAND_URL} />)
     expect(screen.queryByTestId('card-pattern')).not.toBeInTheDocument()
   })

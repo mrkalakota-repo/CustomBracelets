@@ -17,7 +17,7 @@ jest.mock('stripe', () => {
 
 const CART_ITEMS: CartItem[] = [
   { id: '1', name: 'Sage Beaded', baseStyle: 'beaded', price: 12, quantity: 1, addOns: {}, imageUrl: '' },
-  { id: '2', name: 'Cream Cord',  baseStyle: 'cord',   price: 10, quantity: 2, addOns: {}, imageUrl: '' },
+  { id: '2', name: 'Cream String', baseStyle: 'string', price: 10, quantity: 2, addOns: {}, imageUrl: '' },
 ]
 
 function makeRequest(body: unknown) {

@@ -14,6 +14,8 @@ const EnvSchema = z.object({
   // Optional — analytics. Set to enable PostHog server-side event tracking.
   POSTHOG_API_KEY:           z.string().optional(),
   POSTHOG_HOST:              z.string().optional(),
+  // Optional — Cloudflare Turnstile bot protection (server-side secret).
+  TURNSTILE_SECRET_KEY:      z.string().optional(),
 })
 
 type Env = z.infer<typeof EnvSchema>

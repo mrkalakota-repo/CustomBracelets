@@ -7,7 +7,7 @@ jest.mock('next/navigation', () => ({
 
 const PRODUCTS = [
   { id: '1', name: 'Sage Beaded',   type: 'beaded',    price: 12, imageUrl: '/img/1.jpg', occasion: 'everyday' },
-  { id: '2', name: 'Cream Cord',    type: 'cord',      price: 10, imageUrl: '/img/2.jpg', occasion: 'everyday' },
+  { id: '2', name: 'Cream String',  type: 'string',      price: 10, imageUrl: '/img/2.jpg', occasion: 'everyday' },
   { id: '3', name: 'Gold Chain',    type: 'chain',     price: 18, imageUrl: '/img/3.jpg', occasion: 'gift' },
   { id: '4', name: 'Charm Stack',   type: 'stackable', price: 25, imageUrl: '/img/4.jpg', occasion: 'gift' },
   { id: '5', name: 'Rose Beaded',   type: 'beaded',    price: 12, imageUrl: '/img/5.jpg', occasion: 'valentines' },
@@ -65,7 +65,7 @@ describe('ShopPage — Filter Controls', () => {
     const filters = screen.getByTestId('filters')
     expect(within(filters).getByRole('button', { name: /all/i })).toBeInTheDocument()
     expect(within(filters).getByRole('button', { name: /beaded/i })).toBeInTheDocument()
-    expect(within(filters).getByRole('button', { name: /cord/i })).toBeInTheDocument()
+    expect(within(filters).getByRole('button', { name: /string/i })).toBeInTheDocument()
     expect(within(filters).getByRole('button', { name: /chain/i })).toBeInTheDocument()
     expect(within(filters).getByRole('button', { name: /stackable/i })).toBeInTheDocument()
   })
@@ -137,9 +137,9 @@ describe('ShopPage — Filtering', () => {
 
 describe('ShopPage — Initial filter from prop', () => {
   it('pre-selects type filter when initialType prop is provided', () => {
-    render(<ShopPage products={PRODUCTS} initialType="cord" />)
-    const cordBtn = within(screen.getByTestId('filters')).getByRole('button', { name: /cord/i })
-    expect(cordBtn).toHaveAttribute('data-active', 'true')
+    render(<ShopPage products={PRODUCTS} initialType="string" />)
+    const stringBtn = within(screen.getByTestId('filters')).getByRole('button', { name: /string/i })
+    expect(stringBtn).toHaveAttribute('data-active', 'true')
     expect(screen.getAllByTestId('product-card')).toHaveLength(1)
   })
 })

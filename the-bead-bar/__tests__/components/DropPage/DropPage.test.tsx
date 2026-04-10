@@ -100,7 +100,7 @@ describe('DropPage — Notify Me form validation', () => {
     fireEvent.click(screen.getByRole('checkbox', { name: /13/i }))
     fireEvent.click(screen.getByTestId('marketing-consent'))
     fireEvent.click(screen.getByRole('button', { name: /notify me/i }))
-    expect(onNotifySubmit).toHaveBeenCalledWith('test@example.com')
+    expect(onNotifySubmit).toHaveBeenCalledWith('test@example.com', undefined)
   })
 
   it('shows success message after submission', async () => {
@@ -209,7 +209,7 @@ describe('DropPage — Sold Out state', () => {
     fireEvent.click(screen.getByRole('checkbox', { name: /13/i }))
     fireEvent.click(screen.getByTestId('marketing-consent'))
     fireEvent.click(screen.getByRole('button', { name: /join waitlist/i }))
-    expect(onWaitlistSubmit).toHaveBeenCalledWith('test@example.com')
+    expect(onWaitlistSubmit).toHaveBeenCalledWith('test@example.com', undefined)
   })
 })
 
