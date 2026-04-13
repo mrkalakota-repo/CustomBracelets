@@ -1,5 +1,6 @@
 import React from 'react'
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native'
+import { Image } from 'expo-image'
 import { router } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { ALL_PRODUCTS, FEATURED_PRODUCT_IDS } from '../../src/lib/products/catalog'
@@ -7,13 +8,13 @@ import { getActiveOrUpcomingDrop } from '../../src/lib/drops/registry'
 import { getDropState } from '../../src/lib/drops/state'
 import { BraceletCard } from '../../src/components/ui/BraceletCard'
 import { Button } from '../../src/components/ui/Button'
+import { PRODUCT_IMAGE_MAP } from '../../src/lib/products/imageMap'
 
 const CATEGORIES = [
-  { id: 'beaded',    label: 'Beaded',    emoji: '📿' },
-  { id: 'cord',      label: 'Cord',      emoji: '🧵' },
-  { id: 'chain',     label: 'Chain',     emoji: '⛓️'  },
-  { id: 'charm',     label: 'Charm',     emoji: '✨' },
-  { id: 'stackable', label: 'Sets',      emoji: '💫' },
+  { id: 'beaded',    label: 'Beaded', imageKey: 'sage-beaded' },
+  { id: 'cord',      label: 'Cord',   imageKey: 'cream-cord'  },
+  { id: 'charm',     label: 'Charm',  imageKey: 'gold-charm'  },
+  { id: 'stackable', label: 'Sets',   imageKey: 'stackable'   },
 ]
 
 export default function HomeScreen() {
@@ -82,11 +83,15 @@ export default function HomeScreen() {
               <TouchableOpacity
                 key={cat.id}
                 onPress={() => router.push({ pathname: '/(tabs)/shop', params: { type: cat.id } })}
-                className="bg-white rounded-2xl px-4 py-3 items-center shadow-sm"
-                style={{ minWidth: 80 }}
+                className="bg-white rounded-2xl overflow-hidden shadow-sm items-center"
+                style={{ width: 80 }}
               >
-                <Text className="text-2xl mb-1">{cat.emoji}</Text>
-                <Text className="text-gray-700 text-xs font-medium">{cat.label}</Text>
+                <Image
+                  source={PRODUCT_IMAGE_MAP[cat.imageKey]}
+                  style={{ width: 80, height: 64 }}
+                  contentFit="cover"
+                />
+                <Text className="text-gray-700 text-xs font-medium py-2">{cat.label}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
