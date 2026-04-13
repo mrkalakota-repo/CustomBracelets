@@ -25,10 +25,10 @@ interface HomePageProps {
 }
 
 const CATEGORIES = [
-  { id: 'beaded',    label: 'Beaded',    emoji: '📿' },
-  { id: 'string',    label: 'String',    emoji: '🧵' },
-  { id: 'chain',     label: 'Chain',     emoji: '⛓️'  },
-  { id: 'stackable', label: 'Stackable', emoji: '💫' },
+  { id: 'beaded',    label: 'Beaded',    image: '/images/sage-beaded.png'  },
+  { id: 'string',    label: 'String',    image: '/images/cream-cord.png'   },
+  { id: 'chain',     label: 'Chain',     image: '/images/gold-chain.png'   },
+  { id: 'stackable', label: 'Stackable', image: '/images/stackable.png'    },
 ]
 
 export function HomePage({ featuredProducts, activeDrop }: HomePageProps) {
@@ -84,11 +84,13 @@ function Categories() {
     <section data-testid="categories" className="section page-container">
       <h2 className="text-center mb-6">Shop by Style</h2>
       <div className="flex flex-wrap gap-3 justify-center">
-        {CATEGORIES.map(({ id, label, emoji }) => (
+        {CATEGORIES.map(({ id, label, image }) => (
           <Link key={id} href={`/shop?type=${id}`} aria-label={label}
-            className="flex flex-col items-center gap-1 bg-white rounded-2xl px-5 py-3 shadow-sm hover:shadow-md transition-shadow min-w-[72px]">
-            <span className="text-2xl">{emoji}</span>
-            <span className="text-xs font-medium text-[var(--text-dark)]">{label}</span>
+            className="flex flex-col items-center gap-1 bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow w-[80px]">
+            <div className="relative w-full h-16">
+              <Image src={image} alt={label} fill sizes="80px" className="object-cover" />
+            </div>
+            <span className="text-xs font-medium text-[var(--text-dark)] py-2">{label}</span>
           </Link>
         ))}
       </div>
