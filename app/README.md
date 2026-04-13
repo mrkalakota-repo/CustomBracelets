@@ -1,50 +1,39 @@
-# Welcome to your Expo app 👋
+# Chic Charm Co. — Mobile App (`app/`)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Expo SDK 54 + Expo Router 6 native app for iOS and Android. See the [root README](../README.md) for full project context, all third-party integrations, and Web vs. App differences.
 
-## Get started
-
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Commands
 
 ```bash
-npm run reset-project
+npx expo run:ios                     # first build — installs native deps, ~5 min
+npx expo start --ios --clear         # subsequent iOS starts
+npx expo start --android --clear     # subsequent Android starts
+npm run lint
+npx tsc --noEmit
+npm test                             # Jest (jest-expo preset)
+npm run test:watch
+npm run test:coverage
+cd ios && pod install --no-repo-update   # after adding native deps
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+**Never use `npx expo start` without `--ios` or `--android`** — web bundler fails.  
+**Never use Expo Go** — requires a native dev build (expo-router 6).
 
-## Learn more
+## Environment Variables
 
-To learn more about developing your project with Expo, look at the following resources:
+Create `.env.local` in this directory:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```
+EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+EXPO_PUBLIC_SUPABASE_URL=https://<project>.supabase.co
+EXPO_PUBLIC_SUPABASE_ANON_KEY=eyJ...
+EXPO_PUBLIC_API_BASE_URL=https://<project>.supabase.co/functions/v1
+```
 
-## Join the community
+`EXPO_PUBLIC_API_BASE_URL` must end in `/functions/v1` — checkout appends `/checkout`, Klaviyo appends `/klaviyo-subscribe`. Do NOT include `/api` in the path.
 
-Join our community of developers creating universal apps.
+All `EXPO_PUBLIC_` variables are inlined at build time by Metro.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Architecture Notes
+
+See `CLAUDE.md` in this directory for full architecture details including routing rules, state management, NativeWind setup, and React Native pitfalls.

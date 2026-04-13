@@ -29,7 +29,14 @@ cd ios && pod install --no-repo-update
 ```
 The Podfile uses `source 'https://cdn.cocoapods.org/'` — always pass `--no-repo-update` to skip the slow Git specs repo sync.
 
-No test runner is configured yet. When adding tests, use Jest with `jest-expo`.
+Run tests:
+```bash
+npm test                   # jest-expo preset
+npm run test:watch
+npm run test:coverage
+```
+
+Tests live in `__tests__/` mirroring `src/`. The jest config is at `jest.config.js`. Supabase client and AsyncStorage are mocked at module level in each test file.
 
 ## Environment
 
@@ -60,14 +67,14 @@ The builder opens as a modal (`presentation: 'modal'`). Use `router.dismissAll()
 ### State (`src/store/`)
 
 - **`cart.ts`** — `CartItem[]`, `addProduct()`, `addCustom()`, `removeItem()`, `total()`, `itemCount()`. Persisted to AsyncStorage under key `chic-charm-cart` (items only, not derived state). Supports both catalog products and custom-built bracelets.
-- **`builder.ts`** — 5-step state (`baseStyle → primaryColor → accentPattern → addOns`). `setBaseStyle()` resets all downstream steps via `resetFromStep()`. `currentStep()` derives current step. `charm` base skips step 3 (no patterns).
+- **`builder.ts`** — 5-step state (`baseStyle → primaryColor → accentPattern → addOns`). `setBaseStyle()` resets all downstream steps via `resetFromStep()`. `currentStep()` derives current step.
 
 ### Shared Logic (`src/lib/`)
 
 Copied from `../the-bead-bar/src/lib/` — **must stay in sync with the website**:
 
-- `builder/compatibility.ts` — `getCompatiblePatterns(base)` drives Step 3 options. Changing base resets steps 2–4.
-- `builder/pricing.ts` — `calculatePrice(base, addOns)`. BFF duo = `price * 2 - 2`.
+- `builder/compatibility.ts` — `BaseStyle = 'beaded' | 'string' | 'chain' | 'stackable'`. `getCompatiblePatterns(base)` drives Step 3 options. Changing base resets steps 2–4.
+- `builder/pricing.ts` — `calculatePriceLocal(base, addOns)`. BFF duo = `price * 2 - 2`. Charm is an add-on (`addOns.charm`), not a base style.
 - `products/catalog.ts` — `ALL_PRODUCTS`, `getProductById()`. `imageUrl` is a bare key string (images not yet wired up).
 - `drops/registry.ts` — drop schedule, `getActiveOrUpcomingDrop()` drives the home screen drop strip.
 

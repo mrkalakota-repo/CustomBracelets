@@ -12,7 +12,7 @@ This is a monorepo for Chic Charm Co. — a D2C bracelet business. One git repo 
 | `app/` | iOS + Android native app | Expo SDK 54, Expo Router 6, React Native, NativeWind, Zustand |
 | `supabase/functions/` | Edge Functions (serverless backend) | Deno, deployed to Supabase |
 
-**Read the sub-project's `CLAUDE.md` before working in either directory.** Each has full architecture, env vars, and testing details.
+**Read the sub-project's `CLAUDE.md` before working in either directory.** Each has full architecture, env vars, and testing details. Note: `the-bead-bar/AGENTS.md` warns that Next.js 16 has breaking changes from common training data — check `node_modules/next/dist/docs/` for current API behavior before writing Next.js code.
 
 ## Commands
 
@@ -39,6 +39,8 @@ npx expo start --ios --clear        # subsequent iOS starts
 npx expo start --android --clear    # subsequent Android starts
 npm run lint
 npx tsc --noEmit
+npm test                            # Jest (jest-expo preset)
+npm run test:watch
 cd ios && pod install --no-repo-update   # after adding native deps
 ```
 
@@ -79,7 +81,9 @@ Klaviyo email signups from the app call the `klaviyo-subscribe` edge function (s
 **Edge Functions:**
 - `checkout` — creates Stripe PaymentIntent, recalculates prices server-side
 - `klaviyo-subscribe` — subscribes email to a Klaviyo drop list
-- `stripe-webhook` — handles `payment_intent.succeeded`: creates `orders` + `order_items` rows in Supabase, decrements inventory via `decrement_inventory` RPC
+- `stripe-webhook` — handles `payment_intent.succeeded` (creates `orders` + `order_items`, decrements inventory via `decrement_inventory` RPC) and `charge.refunded` (restores inventory via `increment_inventory` RPC, marks order `refunded`)
+
+**`decrement_inventory` RPC** returns `boolean` — `true` if stock was successfully decremented, `false` if insufficient stock (OVERSELL). Always check the return value and log an oversell alert.
 
 **Database migrations** live in `supabase/migrations/`. Apply with `supabase db push`. Migration files are prefixed with a timestamp; do not edit existing migrations — add new ones.
 
@@ -92,6 +96,8 @@ Pricing logic exists in **three places** — changes must be made in all three:
 | Builder pricing | `the-bead-bar/src/lib/builder/pricing.ts` | `app/src/lib/builder/pricing.ts` | `supabase/functions/checkout/index.ts` (inlined) |
 | Builder compatibility | `the-bead-bar/src/lib/builder/compatibility.ts` | `app/src/lib/builder/compatibility.ts` | — |
 | Product catalog | `the-bead-bar/src/lib/products/catalog.ts` | `app/src/lib/products/catalog.ts` | — |
+
+`BaseStyle` is `'beaded' | 'string' | 'chain' | 'stackable'` — `'cord'` was renamed to `'string'` and `'charm'` was removed as a base style. Charm is still available as an **add-on** (`addOns.charm`) on any base style.
 
 Prices are always **recalculated server-side** — client-supplied prices are ignored.
 
@@ -114,6 +120,37 @@ Expo Router file-based routing. Root layout at `app/app/_layout.tsx`.
 - All non-tab screens must be registered with `<Stack.Screen name="...">` in `_layout.tsx` — unregistered screens may fall through to `+not-found`
 - The builder opens as a modal (`presentation: 'modal'`); use `router.dismissAll()` to close it
 - Modal screens (`sign-in`, `verify-phone`, `builder`) are dismissed with `router.back()` or `router.dismissAll()`
+
+## Known API Pitfalls
+
+### Klaviyo (applies to both web and edge function)
+
+The Klaviyo `profile-subscription-bulk-create-jobs` endpoint (revision `2023-12-15`) rejects any field other than `email` inside `profile.attributes`. Do **not** include `source`, `first_name`, or any other field there — it returns HTTP 400.
+
+```ts
+// Correct
+data: [{ type: 'profile', attributes: { email } }]
+```
+
+Both `the-bead-bar/src/lib/klaviyo/client.ts` and `supabase/functions/klaviyo-subscribe/index.ts` must follow this pattern.
+
+### Supabase anon key format
+
+Edge functions require the legacy JWT format (`eyJ...`) in the `Authorization` header. The newer `sb_publishable_...` format is for the Supabase client library only — using it directly in `fetch` headers returns 401 "Invalid Token or Protected Header formatting".
+
+### TypeScript null narrowing in `'use client'` async handlers
+
+TypeScript loses null narrowing from outer scope inside async closures. Capture values in a `const` before defining handler functions:
+
+```ts
+// DropRoute.tsx — drop is narrowed to non-null here
+const dropId = drop.id  // capture before async closures
+
+async function handleNotify(email: string) {
+  // drop.id would be a TS error here — use dropId instead
+  body: JSON.stringify({ email, dropId })
+}
+```
 
 ## React Native Pitfalls
 

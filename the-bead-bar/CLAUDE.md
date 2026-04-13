@@ -38,7 +38,13 @@ KLAVIYO_API_KEY=pk_...
 KLAVIYO_DROP_LIST_ID=...
 KLAVIYO_WAITLIST_LIST_ID=...
 KLAVIYO_MARKETING_LIST_ID=...
+# Optional — Cloudflare Turnstile bot protection
+# Widget renders nothing and verification is skipped if these are absent (dev-safe)
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=...   # inlined at build time
+TURNSTILE_SECRET_KEY=...             # server-side only
 ```
+
+Cloudflare provides always-pass test keys for staging: site key `1x00000000000000000000AA`, secret `1x0000000000000000000000000000000AA`.
 
 Server-side secrets (`STRIPE_SECRET_KEY`, `KLAVIYO_API_KEY`) are validated lazily at first request via `src/lib/env.ts` (Zod schema, Proxy-based). Missing required keys throw a clear error at runtime, not at build time. `NEXT_PUBLIC_*` vars are inlined at build time by Next.js.
 
@@ -61,9 +67,9 @@ Server-side secrets (`STRIPE_SECRET_KEY`, `KLAVIYO_API_KEY`) are validated lazil
 ### Key domain models
 
 **Builder** (`src/lib/builder/`)
-- `compatibility.ts` — `BaseStyle` type, `COMPATIBLE_PATTERNS` map, `getCompatiblePatterns()`, `isValidCombo()`, `resetFromStep()`
-- `pricing.ts` — `BASE_PRICES`, `ADDON_PRICES`, `calculatePrice()`. BFF duo = `price * 2 - 2`.
-- `BuilderFlow.tsx` — 5-step wizard: base → color → pattern → add-ons → preview. `charm` base skips step 3. `selectBase()` resets all downstream state.
+- `compatibility.ts` — `BaseStyle` type (`'beaded' | 'string' | 'chain' | 'stackable'`), `COMPATIBLE_PATTERNS` map, `getCompatiblePatterns()`, `isValidCombo()`, `resetFromStep()`
+- `pricing.ts` — `BASE_PRICES`, `ADDON_PRICES`, `calculatePrice()`. BFF duo = `price * 2 - 2`. Charm is an add-on (`ADDON_PRICES.charm = 3`), not a base style.
+- `BuilderFlow.tsx` — 5-step wizard: base → color → pattern → add-ons → preview. `selectBase()` resets all downstream state.
 
 **Drops** (`src/lib/drops/`)
 - `state.ts` — `DropState` enum (`UPCOMING | LIVE | SOLD_OUT | ENDED`), `getDropState(launchDate, stock, now)`. A drop moves to `ENDED` when stock=0 and >7 days have passed since launch.
@@ -104,11 +110,13 @@ Every API route must:
 
 The checkout route additionally recalculates all item prices server-side; never trust client-supplied prices.
 
+**Turnstile** (`src/lib/turnstile.ts`, `src/components/Turnstile/TurnstileWidget.tsx`): bot protection on drop subscription forms. `TurnstileWidget` renders nothing when `NEXT_PUBLIC_TURNSTILE_SITE_KEY` is unset — forms still work in dev. `/api/klaviyo/subscribe` verifies the token server-side via `verifyTurnstileToken()`; gracefully skips verification if `TURNSTILE_SECRET_KEY` is unset. The Jest mock lives at `__mocks__/@marsidev/react-turnstile.tsx`.
+
 ### Compliance rules (must not be removed)
 
 - **COPPA**: Every data-capture form (notify-me, waitlist) includes `AgeGateForm` with `minAge=13`.
 - **BNPL age gate**: Afterpay/Klarna in `CheckoutPage` is hidden behind `AgeGateForm` with `minAge=18`.
-- **GDPR**: Both `NotifyMeForm` and `WaitlistForm` require an explicit marketing-consent checkbox before submit. `onNotifySubmit` / `onWaitlistSubmit` handlers are typed `(email: string) => Promise<void> | void` — always await them and surface errors to the user.
+- **GDPR**: Both `NotifyMeForm` and `WaitlistForm` require an explicit marketing-consent checkbox before submit. Handlers are typed `(email: string, turnstileToken?: string) => Promise<void> | void` — always await them and surface errors to the user.
 
 ### Styling
 
