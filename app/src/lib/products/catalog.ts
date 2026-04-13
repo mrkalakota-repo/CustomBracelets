@@ -29,10 +29,10 @@ export const ALL_PRODUCTS: Product[] = [
   },
   {
     id:          '3',
-    name:        'Gold Chain Bracelet',
-    type:        'chain',
+    name:        'Gold Charm Bracelet',
+    type:        'charm',
     price:       18,
-    imageUrl:    'gold-chain',
+    imageUrl:    'gold-charm',
     occasion:    'gift',
     description: 'Delicate 14k gold-filled chain with a lobster clasp. A timeless everyday piece.',
   },
