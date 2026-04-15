@@ -27,7 +27,7 @@ interface HomePageProps {
 const CATEGORIES = [
   { id: 'beaded',    label: 'Beaded',    image: '/images/sage-beaded.png'  },
   { id: 'string',    label: 'String',    image: '/images/cream-cord.png'   },
-  { id: 'chain',     label: 'Chain',     image: '/images/gold-chain.png'   },
+  { id: 'chain',     label: 'Charm',     image: '/images/gold-charm.png'   },
   { id: 'stackable', label: 'Stackable', image: '/images/stackable.png'    },
 ]
 

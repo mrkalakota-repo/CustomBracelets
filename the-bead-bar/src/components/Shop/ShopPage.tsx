@@ -23,9 +23,16 @@ const TYPE_FILTERS = [
   { id: 'all',       label: 'All' },
   { id: 'beaded',    label: 'Beaded' },
   { id: 'string',    label: 'String' },
-  { id: 'chain',     label: 'Chain' },
+  { id: 'chain',     label: 'Charm' },
   { id: 'stackable', label: 'Stackable' },
 ]
+
+const STYLE_IMAGES: Record<string, { src: string; label: string }> = {
+  beaded:    { src: '/images/sage-beaded.png',  label: 'Beaded' },
+  string:    { src: '/images/cream-cord.png',   label: 'String' },
+  chain:     { src: '/images/gold-charm.png',   label: 'Charm' },
+  stackable: { src: '/images/stackable.png',    label: 'Stackable' },
+}
 
 export function ShopPage({ products, initialType }: ShopPageProps) {
   const router = useRouter()
@@ -44,6 +51,22 @@ export function ShopPage({ products, initialType }: ShopPageProps) {
   return (
     <div data-testid="shop-page" className="page-container py-8">
       <h1 className="mb-6">Shop</h1>
+
+      {/* Style banner */}
+      {activeType !== 'all' && STYLE_IMAGES[activeType] && (
+        <div className="flex items-center gap-4 mb-6">
+          <div className="relative w-16 h-16 rounded-2xl overflow-hidden shadow-sm flex-shrink-0">
+            <Image
+              src={STYLE_IMAGES[activeType].src}
+              alt={STYLE_IMAGES[activeType].label}
+              fill
+              sizes="64px"
+              className="object-cover"
+            />
+          </div>
+          <h2 className="text-xl font-semibold">{STYLE_IMAGES[activeType].label}</h2>
+        </div>
+      )}
 
       {/* Filters */}
       <div data-testid="filters" className="flex flex-wrap gap-2 mb-6">
