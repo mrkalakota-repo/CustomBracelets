@@ -95,11 +95,13 @@ Pricing logic exists in **three places** — changes must be made in all three:
 |---|---|---|---|
 | Builder pricing | `the-bead-bar/src/lib/builder/pricing.ts` | `app/src/lib/builder/pricing.ts` | `supabase/functions/checkout/index.ts` (inlined) |
 | Builder compatibility | `the-bead-bar/src/lib/builder/compatibility.ts` | `app/src/lib/builder/compatibility.ts` | — |
-| Product catalog | `the-bead-bar/src/lib/products/catalog.ts` | `app/src/lib/products/catalog.ts` | — |
+| Product catalog | **Supabase `products` table** (website reads DB) | `app/src/lib/products/catalog.ts` (still static) | — |
 
 `BaseStyle` is `'beaded' | 'string' | 'chain' | 'stackable'` — `'cord'` was renamed to `'string'` and `'charm'` was removed as a base style. Charm is still available as an **add-on** (`addOns.charm`) on any base style.
 
 Prices are always **recalculated server-side** — client-supplied prices are ignored.
+
+**The website product/drop/banner catalog is now database-driven.** The static arrays `ALL_PRODUCTS` and `DROP_REGISTRY` no longer exist — use `getAllProducts()`, `getProductById()`, `getAllDrops()`, `getDropById()` (all async, in `catalog.ts` / `registry.ts`). Banners are in `src/lib/banners/banners.ts`. The app still uses hardcoded static arrays.
 
 ## Auth
 
@@ -107,9 +109,12 @@ Phone + 6-digit PIN via Supabase Auth (no email/password).
 
 - **Sign-up flow**: `signUp` → Supabase sends OTP SMS → `verifyOtp` → session active
 - **Sign-in flow**: `signInWithPassword(phone, pin)` → session active
+- **Change PIN flow**: `updatePin(currentPin, newPin)` — verifies current PIN via `signInWithPassword` first, then calls `supabase.auth.updateUser({ password: newPin })`. Website page at `/profile/change-pin`.
+- **Forgot PIN**: triggers OTP via `resendOtp`, then `/verify-phone?action=reset` sets a new PIN after verification.
 - **Session storage**: `SecureStore` (app). Website uses Supabase's default browser `localStorage` storage.
-- **Website auth**: `src/context/AuthContext.tsx` + `src/lib/supabase/client.ts`. Pages: `/sign-in`, `/verify-phone`, `/profile`. Sign-in and verify-phone are full-page routes (not modals). After OTP verification, `router.replace('/profile')`.
+- **Website auth**: `src/context/AuthContext.tsx` + `src/lib/supabase/client.ts`. Pages: `/sign-in`, `/verify-phone`, `/profile`, `/profile/change-pin`. Sign-in and verify-phone are full-page routes (not modals). After OTP verification, `router.replace('/profile')`.
 - **App navigation**: `sign-in` and `verify-phone` screens are `presentation: 'modal'`. After OTP verification, call `router.dismissAll()` then `router.replace('/(tabs)/profile')` to clear both modals and land on profile.
+- **Admin auth**: `ADMIN_PHONE` env var designates the owner's account. `verifyAdminAuth()` in `src/lib/supabase/adminAuth.ts` validates Bearer tokens on all admin API routes. Client-side `AdminGuard` component gates the `/admin` UI.
 
 ## App Navigation Patterns
 
@@ -120,6 +125,40 @@ Expo Router file-based routing. Root layout at `app/app/_layout.tsx`.
 - All non-tab screens must be registered with `<Stack.Screen name="...">` in `_layout.tsx` — unregistered screens may fall through to `+not-found`
 - The builder opens as a modal (`presentation: 'modal'`); use `router.dismissAll()` to close it
 - Modal screens (`sign-in`, `verify-phone`, `builder`) are dismissed with `router.back()` or `router.dismissAll()`
+
+## Admin Dashboard (`/admin`)
+
+Owner-only UI at `/admin` for managing products, drops, and banners without code changes.
+
+- **Access**: gated by `AdminGuard` (client component, checks `user.phone === NEXT_PUBLIC_ADMIN_PHONE`). Middleware at `src/middleware.ts` adds rate limiting (60 req/min/IP) and `X-Robots-Tag: noindex` headers. `robots.txt` also disallows `/admin`.
+- **API routes**: all under `src/app/api/admin/`. Every route follows: `rateLimit()` → `verifyAdminAuth()` → Zod parse → Supabase query.
+- **Required env vars**: `SUPABASE_SERVICE_ROLE_KEY` (service_role secret JWT, not anon key), `ADMIN_PHONE` (E.164 format matching `auth.users.phone`), `NEXT_PUBLIC_ADMIN_PHONE` (same value, build-time inlined for AdminGuard).
+- **Activation rule**: only one banner is active at a time — activating one auto-deactivates all others.
+- **Mutations from client components**: always call `router.refresh()` after a successful fetch mutation to re-run Server Component data fetching.
+
+## Supabase Client Architecture
+
+Three distinct clients — use the right one for the context:
+
+| Client | File | Used for |
+|--------|------|----------|
+| Browser anon | `src/lib/supabase/client.ts` | All client components, `AuthContext` |
+| Server anon | `src/lib/supabase/anon-server.ts` | Server Components reading public data (products, drops, banners) |
+| Server service-role | `src/lib/supabase/server.ts` | Admin API routes — bypasses RLS, **never expose to browser** |
+
+Both server clients use a `noopStorage` adapter (no file-based DB in Node.js) and factory functions (`createAnonServerClient()` / `createServerSupabaseClient()`) — no singletons, fresh client per request.
+
+## Database Tables
+
+All in `supabase/migrations/`. Never edit existing migration files — always add new ones.
+
+| Table | Key columns | Notes |
+|-------|-------------|-------|
+| `products` | id (text PK), name, type (enum), price, image_url, occasion, description | Public SELECT via RLS; admin writes via service-role |
+| `drops` | id (text PK), name, theme, launch_date, stock, preview_image_url, product_ids (text[]), social_copy | Same RLS pattern |
+| `banners` | id (serial PK), message, cta_label, cta_url, bg_color (sage/gold/cream), is_active | Only one `is_active=true` at a time |
+| `orders` / `order_items` | — | Written by `stripe-webhook` edge function |
+| `inventory` | id, name, quantity | Decremented by `decrement_inventory` RPC (returns bool — check for oversell) |
 
 ## Known API Pitfalls
 
