@@ -4,6 +4,9 @@ import { getAllDrops } from '@/lib/drops/registry'
 import { getDropState, DropState } from '@/lib/drops/state'
 import { getActiveBanner } from '@/lib/banners/banners'
 
+// Homepage shows live data (active banner, live drops) — always render fresh.
+export const dynamic = 'force-dynamic'
+
 export default async function Home() {
   const [allProducts, allDrops, activeBanner] = await Promise.all([getAllProducts(), getAllDrops(), getActiveBanner()])
 
