@@ -2,6 +2,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { DropState } from '@/lib/drops/state'
 import { DropStripTimer } from './DropStripTimer'
+import { PromoBanner } from './PromoBanner'
+import type { Banner } from '@/lib/banners/banners'
 
 interface Product {
   id:       string
@@ -22,6 +24,7 @@ interface ActiveDrop {
 interface HomePageProps {
   featuredProducts: Product[]
   activeDrop?:      ActiveDrop
+  activeBanner?:    Banner
 }
 
 const CATEGORIES = [
@@ -31,9 +34,10 @@ const CATEGORIES = [
   { id: 'stackable', label: 'Stackable', image: '/images/stackable.png'    },
 ]
 
-export function HomePage({ featuredProducts, activeDrop }: HomePageProps) {
+export function HomePage({ featuredProducts, activeDrop, activeBanner }: HomePageProps) {
   return (
     <div>
+      {activeBanner && <PromoBanner banner={activeBanner} />}
       <Hero />
       {activeDrop && <DropStrip drop={activeDrop} />}
       <Categories />

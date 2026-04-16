@@ -16,6 +16,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <Link href="/admin/drops" className="text-text-dark hover:text-sage transition-colors">
               Drops
             </Link>
+            <Link href="/admin/banners" className="text-text-dark hover:text-sage transition-colors">
+              Banners
+            </Link>
           </nav>
         </div>
         {children}
