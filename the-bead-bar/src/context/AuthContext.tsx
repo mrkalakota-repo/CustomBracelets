@@ -12,6 +12,7 @@ interface AuthContextType {
   signUpWithPhone: (phone: string, pin: string, name: string) => Promise<{ error: string | null; needsVerification: boolean }>
   verifyOtp:       (phone: string, token: string) => Promise<{ error: string | null }>
   resendOtp:       (phone: string) => Promise<{ error: string | null }>
+  updatePin:       (currentPin: string, newPin: string) => Promise<{ error: string | null }>
   signOut:         () => Promise<void>
 }
 
@@ -63,6 +64,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error: error?.message ?? null }
   }
 
+  async function updatePin(currentPin: string, newPin: string) {
+    const phone = session?.user?.phone
+    if (!phone) return { error: 'Not signed in' }
+
+    // Verify current PIN before allowing the change
+    const { error: verifyError } = await supabase.auth.signInWithPassword({
+      phone,
+      password: currentPin,
+    })
+    if (verifyError) return { error: 'Current PIN is incorrect' }
+
+    const { error } = await supabase.auth.updateUser({ password: newPin })
+    return { error: error?.message ?? null }
+  }
+
   async function signOut() {
     await supabase.auth.signOut()
   }
@@ -76,6 +92,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signUpWithPhone,
       verifyOtp,
       resendOtp,
+      updatePin,
       signOut,
     }}>
       {children}

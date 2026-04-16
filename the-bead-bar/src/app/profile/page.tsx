@@ -41,6 +41,10 @@ export default function ProfilePage() {
         <Link href="/builder" className="text-sm text-text-dark hover:text-sage transition-colors">
           Builder
         </Link>
+        <hr className="border-border" />
+        <Link href="/profile/change-pin" className="text-sm text-text-dark hover:text-sage transition-colors">
+          Change PIN
+        </Link>
       </div>
 
       <button
