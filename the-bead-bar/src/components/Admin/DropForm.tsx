@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
 import type { Drop } from '@/lib/drops/registry'
+import { ImageUpload } from './ImageUpload'
 
 interface DropFormProps {
   initialDrop?: Drop
@@ -154,16 +155,11 @@ export function DropForm({ initialDrop }: DropFormProps) {
         />
       </div>
 
-      <div>
-        <label className="block text-sm font-medium mb-1">Preview image path</label>
-        <input
-          className="input w-full"
-          name="previewImageUrl"
-          value={fields.previewImageUrl}
-          onChange={onChange}
-          placeholder="/images/drops/my-drop.svg"
-        />
-      </div>
+      <ImageUpload
+        label="Preview image"
+        value={fields.previewImageUrl}
+        onChange={url => setFields(prev => ({ ...prev, previewImageUrl: url }))}
+      />
 
       <div>
         <label className="block text-sm font-medium mb-1">Product IDs</label>

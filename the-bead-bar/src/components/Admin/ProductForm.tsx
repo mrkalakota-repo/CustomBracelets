@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
 import type { Product } from '@/lib/products/catalog'
+import { ImageUpload } from './ImageUpload'
 
 interface ProductFormProps {
   initialProduct?: Product
@@ -112,17 +113,11 @@ export function ProductForm({ initialProduct }: ProductFormProps) {
         />
       </div>
 
-      <div>
-        <label className="block text-sm font-medium mb-1">Image path</label>
-        <input
-          className="input w-full"
-          name="imageUrl"
-          value={fields.imageUrl}
-          onChange={onChange}
-          placeholder="/images/my-bracelet.svg"
-        />
-        <p className="text-xs text-text-mid mt-1">Path relative to /public — e.g. /images/sage-beaded.svg</p>
-      </div>
+      <ImageUpload
+        label="Image"
+        value={fields.imageUrl}
+        onChange={url => setFields(prev => ({ ...prev, imageUrl: url }))}
+      />
 
       <div>
         <label className="block text-sm font-medium mb-1">Occasion</label>
