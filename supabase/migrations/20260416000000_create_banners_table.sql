@@ -1,4 +1,4 @@
-create table public.banners (
+create table if not exists public.banners (
   id         serial primary key,
   message    text not null,
   cta_label  text,

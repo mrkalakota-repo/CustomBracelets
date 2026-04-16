@@ -1,4 +1,4 @@
-create table public.drops (
+create table if not exists public.drops (
   id                text        primary key,
   name              text        not null,
   theme             text        not null default '',

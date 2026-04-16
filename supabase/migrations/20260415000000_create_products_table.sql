@@ -1,4 +1,4 @@
-create table public.products (
+create table if not exists public.products (
   id          text         primary key,
   name        text         not null,
   type        text         not null check (type in ('beaded','string','chain','stackable')),
