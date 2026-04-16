@@ -23,20 +23,15 @@ const EnvSchema = z.object({
 
 type Env = z.infer<typeof EnvSchema>
 
-// Validate lazily on first access so the check runs at request time (not at
-// Next.js build time when env vars are not present).
-let _env: Env | undefined
-
+// Read directly from process.env on every access so that env vars added after
+// module load (or missing during a cached build) are always picked up fresh.
 export const env = new Proxy({} as Env, {
   get(_target, prop: string) {
-    if (!_env) {
-      const result = EnvSchema.safeParse(process.env)
-      if (!result.success) {
-        const missing = result.error.issues.map(i => i.message).join(', ')
-        throw new Error(`Missing required environment variables: ${missing}`)
-      }
-      _env = result.data
+    const result = EnvSchema.safeParse(process.env)
+    if (!result.success) {
+      const missing = result.error.issues.map(i => i.message).join(', ')
+      throw new Error(`Missing required environment variables: ${missing}`)
     }
-    return _env[prop as keyof Env]
+    return result.data[prop as keyof Env]
   },
 })
