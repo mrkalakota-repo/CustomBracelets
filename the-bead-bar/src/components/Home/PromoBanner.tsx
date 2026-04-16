@@ -36,7 +36,7 @@ export function PromoBanner({ banner }: PromoBannerProps) {
       aria-label="Promotional banner"
       className={`w-full text-sm py-2 px-4 flex items-center justify-center gap-3 ${COLOR_CLASSES[banner.bgColor]}`}
     >
-      <span>{banner.message}</span>
+      <span className="font-bold text-center">{banner.message}</span>
 
       {banner.ctaUrl && banner.ctaLabel && (
         <a
