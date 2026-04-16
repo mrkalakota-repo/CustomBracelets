@@ -21,6 +21,8 @@ applications:
             - echo "SENTRY_PROJECT=$SENTRY_PROJECT" >> .env
             - echo "POSTHOG_API_KEY=$POSTHOG_API_KEY" >> .env
             - echo "POSTHOG_HOST=$POSTHOG_HOST" >> .env
+            - echo "SUPABASE_SERVICE_ROLE_KEY=$SUPABASE_SERVICE_ROLE_KEY" >> .env
+            - echo "ADMIN_PHONE=$ADMIN_PHONE" >> .env
             - npm run build
       artifacts:
         baseDirectory: .next
