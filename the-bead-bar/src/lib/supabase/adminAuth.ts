@@ -22,8 +22,14 @@ export async function verifyAdminAuth(request: Request): Promise<AdminAuthResult
     return { authorized: false, error: 'Unauthorized', status: 401 }
   }
 
-  if (!env.SUPABASE_SERVICE_ROLE_KEY || !env.ADMIN_PHONE) {
-    return { authorized: false, error: 'Admin not configured', status: 503 }
+  if (!env.SUPABASE_SERVICE_ROLE_KEY && !env.ADMIN_PHONE) {
+    return { authorized: false, error: 'Admin not configured: SUPABASE_SERVICE_ROLE_KEY and ADMIN_PHONE are missing', status: 503 }
+  }
+  if (!env.SUPABASE_SERVICE_ROLE_KEY) {
+    return { authorized: false, error: 'Admin not configured: SUPABASE_SERVICE_ROLE_KEY is missing', status: 503 }
+  }
+  if (!env.ADMIN_PHONE) {
+    return { authorized: false, error: 'Admin not configured: ADMIN_PHONE is missing', status: 503 }
   }
 
   const supabase = createServerSupabaseClient()
