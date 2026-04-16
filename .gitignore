@@ -43,6 +43,14 @@ Thumbs.db
 # Supabase CLI local state
 supabase/.temp/
 
+# Expo native builds generated in wrong directory
+the-bead-bar/ios/
+the-bead-bar/android/
+
+# Local scratch/review files
+Critic_review_report*.html
+amplify *.yml
+
 # IDE
 .vscode/
 .idea/
