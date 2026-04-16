@@ -1,10 +1,12 @@
 import type { MetadataRoute } from 'next'
-import { ALL_PRODUCTS } from '@/lib/products/catalog'
-import { DROP_REGISTRY } from '@/lib/drops/registry'
+import { getAllProducts } from '@/lib/products/catalog'
+import { getAllDrops } from '@/lib/drops/registry'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://chiccharmco.com'
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const [allProducts, allDrops] = await Promise.all([getAllProducts(), getAllDrops()])
+
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: BASE_URL,                     lastModified: new Date(), changeFrequency: 'weekly',  priority: 1 },
     { url: `${BASE_URL}/shop`,           lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.9 },
@@ -16,14 +18,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE_URL}/shipping`,       lastModified: new Date(), changeFrequency: 'yearly',  priority: 0.3 },
   ]
 
-  const productRoutes: MetadataRoute.Sitemap = ALL_PRODUCTS.map(p => ({
+  const productRoutes: MetadataRoute.Sitemap = allProducts.map(p => ({
     url:             `${BASE_URL}/shop/${p.id}`,
     lastModified:    new Date(),
     changeFrequency: 'monthly',
     priority:        0.8,
   }))
 
-  const dropRoutes: MetadataRoute.Sitemap = DROP_REGISTRY.map(d => ({
+  const dropRoutes: MetadataRoute.Sitemap = allDrops.map(d => ({
     url:             `${BASE_URL}/drops/${d.id}`,
     lastModified:    new Date(),
     changeFrequency: 'daily',
