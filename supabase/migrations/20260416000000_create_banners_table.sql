@@ -10,4 +10,4 @@ create table if not exists public.banners (
 );
 
 alter table public.banners enable row level security;
-create policy "banners_select_public" on public.banners for select using (true);
+create policy if not exists "banners_select_public" on public.banners for select using (true);

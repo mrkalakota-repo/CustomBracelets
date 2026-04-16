@@ -40,6 +40,6 @@ insert into public.drops (id, name, theme, launch_date, stock, preview_image_url
 -- Public read; admin writes go through the service-role client which bypasses RLS.
 alter table public.drops enable row level security;
 
-create policy "drops_select_public"
+create policy if not exists "drops_select_public"
   on public.drops for select
   using (true);
