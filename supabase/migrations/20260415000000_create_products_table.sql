@@ -20,6 +20,7 @@ insert into public.products (id, name, type, price, image_url, occasion, descrip
 -- Public read; admin writes go through the service-role client which bypasses RLS.
 alter table public.products enable row level security;
 
-create policy if not exists "products_select_public"
+drop policy if exists "products_select_public" on public.products;
+create policy "products_select_public"
   on public.products for select
   using (true);
