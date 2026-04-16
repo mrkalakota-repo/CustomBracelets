@@ -16,6 +16,9 @@ const EnvSchema = z.object({
   POSTHOG_HOST:              z.string().optional(),
   // Optional — Cloudflare Turnstile bot protection (server-side secret).
   TURNSTILE_SECRET_KEY:      z.string().optional(),
+  // Admin dashboard
+  SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
+  ADMIN_PHONE:               z.string().optional(),
 })
 
 type Env = z.infer<typeof EnvSchema>

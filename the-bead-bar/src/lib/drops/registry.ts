@@ -1,3 +1,5 @@
+import { createAnonServerClient } from '@/lib/supabase/anon-server'
+
 export interface Drop {
   id:              string
   name:            string
@@ -9,41 +11,49 @@ export interface Drop {
   socialCopy:      string
 }
 
-// In production this would be fetched from a database.
-// At launch, maintained as a static registry.
-export const DROP_REGISTRY: Drop[] = [
-  {
-    id:              'spring-bloom-2026',
-    name:            'Spring Bloom',
-    theme:           'Pastel florals, friendship',
-    launchDate:      new Date('2026-04-15T12:00:00Z'),
-    stock:           20,
-    previewImageUrl: '/images/drops/spring-bloom.svg',
-    productIds:      ['1', '2'],
-    socialCopy:      'Spring is here \uD83C\uDF38 New drop April 15',
-  },
-  {
-    id:              'valentines-2026',
-    name:            "Valentine\u2019s Edit",
-    theme:           'Love, hearts, and rose gold everything',
-    launchDate:      new Date('2026-02-10T12:00:00Z'),
-    stock:           0,
-    previewImageUrl: '',
-    productIds:      ['5'],
-    socialCopy:      "Love is in the air \uD83D\uDC95 Valentine\u2019s drop \u2014 sold out!",
-  },
-  {
-    id:              'new-year-2026',
-    name:            'New Year Glow',
-    theme:           'Gold, glitter, and fresh starts',
-    launchDate:      new Date('2026-01-01T00:00:00Z'),
-    stock:           0,
-    previewImageUrl: '',
-    productIds:      ['3', '4'],
-    socialCopy:      '\u2728 New year, new stack. Drop has ended.',
-  },
-]
+interface DropRow {
+  id:                string
+  name:              string
+  theme:             string
+  launch_date:       string
+  stock:             number
+  preview_image_url: string
+  product_ids:       string[]
+  social_copy:       string
+}
 
-export function getDropById(id: string): Drop | undefined {
-  return DROP_REGISTRY.find(d => d.id === id)
+function rowToDrop(row: DropRow): Drop {
+  return {
+    id:              row.id,
+    name:            row.name,
+    theme:           row.theme,
+    launchDate:      new Date(row.launch_date),
+    stock:           row.stock,
+    previewImageUrl: row.preview_image_url,
+    productIds:      row.product_ids,
+    socialCopy:      row.social_copy,
+  }
+}
+
+export async function getAllDrops(): Promise<Drop[]> {
+  const supabase = createAnonServerClient()
+  const { data, error } = await supabase
+    .from('drops')
+    .select('*')
+    .order('launch_date', { ascending: false })
+
+  if (error) throw new Error(`Failed to load drops: ${error.message}`)
+  return (data as DropRow[]).map(rowToDrop)
+}
+
+export async function getDropById(id: string): Promise<Drop | undefined> {
+  const supabase = createAnonServerClient()
+  const { data, error } = await supabase
+    .from('drops')
+    .select('*')
+    .eq('id', id)
+    .single()
+
+  if (error) return undefined
+  return rowToDrop(data as DropRow)
 }

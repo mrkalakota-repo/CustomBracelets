@@ -1,12 +1,14 @@
 import { HomePage } from '@/components/Home/HomePage'
-import { ALL_PRODUCTS, FEATURED_PRODUCT_IDS } from '@/lib/products/catalog'
-import { DROP_REGISTRY } from '@/lib/drops/registry'
+import { getAllProducts, FEATURED_PRODUCT_IDS } from '@/lib/products/catalog'
+import { getAllDrops } from '@/lib/drops/registry'
 import { getDropState, DropState } from '@/lib/drops/state'
 
-const featuredProducts = ALL_PRODUCTS.filter(p => FEATURED_PRODUCT_IDS.includes(p.id))
+export default async function Home() {
+  const [allProducts, allDrops] = await Promise.all([getAllProducts(), getAllDrops()])
 
-export default function Home() {
-  const activeDrop = DROP_REGISTRY
+  const featuredProducts = allProducts.filter(p => FEATURED_PRODUCT_IDS.includes(p.id))
+
+  const activeDrop = allDrops
     .map(d => ({ ...d, state: getDropState(d.launchDate, d.stock) }))
     .find(d => d.state === DropState.UPCOMING || d.state === DropState.LIVE)
 

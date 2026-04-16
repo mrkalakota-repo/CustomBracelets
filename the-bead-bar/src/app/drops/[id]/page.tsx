@@ -4,7 +4,7 @@ import { getDropById } from '@/lib/drops/registry'
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params
-  const drop = getDropById(id)
+  const drop = await getDropById(id)
   if (!drop) return {}
   const title       = `${drop.name} Drop — Chic Charm Co.`
   const description = `${drop.theme} · Limited release on ${new Date(drop.launchDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}.`
@@ -28,6 +28,6 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function DropPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const drop = getDropById(id) ?? null
+  const drop = (await getDropById(id)) ?? null
   return <DropRoute drop={drop} />
 }

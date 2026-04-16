@@ -5,7 +5,7 @@ import { ProductDetailPage } from '@/components/Shop/ProductDetailPage'
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params
-  const product = getProductById(id)
+  const product = await getProductById(id)
   if (!product) return {}
   return {
     title:       `${product.name} — Chic Charm Co.`,
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const product = getProductById(id)
+  const product = await getProductById(id)
   if (!product) notFound()
   return <ProductDetailPage product={product} />
 }
