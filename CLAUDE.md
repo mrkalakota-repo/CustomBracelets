@@ -97,11 +97,13 @@ Pricing logic exists in **three places** — changes must be made in all three:
 | Builder compatibility | `the-bead-bar/src/lib/builder/compatibility.ts` | `app/src/lib/builder/compatibility.ts` | — |
 | Product catalog | **Supabase `products` table** (website reads DB) | `app/src/lib/products/catalog.ts` (still static) | — |
 
-`BaseStyle` is `'beaded' | 'string' | 'chain' | 'stackable'` — `'cord'` was renamed to `'string'` and `'charm'` was removed as a base style. Charm is still available as an **add-on** (`addOns.charm`) on any base style.
+`BaseStyle` is `'beaded' | 'string' | 'chain' | 'stackable'` — `'cord'` was renamed to `'string'` and `'charm'` was removed as a base style. Charm is still available as an **add-on** (`addOns.charm`) on any base style. The internal DB/code value for the chain style remains `'chain'`; the **display label** everywhere (admin dropdown, builder step, shop filter, share card) is `'Charm'`.
 
 Prices are always **recalculated server-side** — client-supplied prices are ignored.
 
 **The website product/drop/banner catalog is now database-driven.** The static arrays `ALL_PRODUCTS` and `DROP_REGISTRY` no longer exist — use `getAllProducts()`, `getProductById()`, `getAllDrops()`, `getDropById()` (all async, in `catalog.ts` / `registry.ts`). Banners are in `src/lib/banners/banners.ts`. The app still uses hardcoded static arrays.
+
+**Dynamic rendering on live-data pages**: any page that reads from the database and must reflect real-time changes (homepage, all admin pages) must export `export const dynamic = 'force-dynamic'`. Without it, Next.js statically renders the page at build time on Amplify and new DB records won't appear until the next deployment. The homepage (`app/page.tsx`) and admin layout (`app/admin/layout.tsx`) already have this.
 
 ## Auth
 
@@ -135,6 +137,8 @@ Owner-only UI at `/admin` for managing products, drops, and banners without code
 - **Required env vars**: `SUPABASE_SERVICE_ROLE_KEY` (service_role secret JWT, not anon key), `ADMIN_PHONE` (E.164 format matching `auth.users.phone`), `NEXT_PUBLIC_ADMIN_PHONE` (same value, build-time inlined for AdminGuard).
 - **Activation rule**: only one banner is active at a time — activating one auto-deactivates all others.
 - **Mutations from client components**: always call `router.refresh()` after a successful fetch mutation to re-run Server Component data fetching.
+- **Image uploads**: `POST /api/admin/upload` accepts `multipart/form-data` with a `file` field, validates admin auth, uploads to the `product-images` Supabase Storage bucket, and returns `{ url }`. The shared `ImageUpload` component (`src/components/Admin/ImageUpload.tsx`) handles file picking, upload, and preview — used by `ProductForm` and `DropForm`.
+- **Dynamic rendering**: the admin layout exports `export const dynamic = 'force-dynamic'`, which cascades to all admin pages so they always serve live DB data rather than a stale static build.
 
 ## Supabase Client Architecture
 
@@ -159,6 +163,10 @@ All in `supabase/migrations/`. Never edit existing migration files — always ad
 | `banners` | id (serial PK), message, cta_label, cta_url, bg_color (sage/gold/cream), is_active | Only one `is_active=true` at a time |
 | `orders` / `order_items` | — | Written by `stripe-webhook` edge function |
 | `inventory` | id, name, quantity | Decremented by `decrement_inventory` RPC (returns bool — check for oversell) |
+
+**Supabase Storage bucket**: `product-images` (public). Holds product and drop preview images uploaded via the admin dashboard. Public URLs follow the pattern `https://<project>.supabase.co/storage/v1/object/public/product-images/<filename>`. `next.config.ts` has a `remotePatterns` entry for `*.supabase.co` so `next/image` accepts these URLs.
+
+**Migration idempotency**: all `CREATE TABLE` statements use `IF NOT EXISTS`; all `CREATE POLICY` statements are preceded by `DROP POLICY IF EXISTS` (PostgreSQL does not support `CREATE POLICY IF NOT EXISTS`).
 
 ## Known API Pitfalls
 
