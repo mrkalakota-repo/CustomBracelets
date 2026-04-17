@@ -94,7 +94,7 @@ export function ProductForm({ initialProduct }: ProductFormProps) {
         <select className="input w-full" name="type" value={fields.type} onChange={onChange}>
           <option value="beaded">Beaded</option>
           <option value="string">String</option>
-          <option value="chain">Chain</option>
+          <option value="chain">Charm</option>
           <option value="stackable">Stackable</option>
         </select>
       </div>

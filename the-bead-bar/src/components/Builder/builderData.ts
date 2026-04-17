@@ -3,7 +3,7 @@ import type { BaseStyle } from '@/lib/builder/compatibility'
 export const BASE_STYLES: { id: BaseStyle; label: string }[] = [
   { id: 'beaded',    label: 'Beaded' },
   { id: 'string',    label: 'String' },
-  { id: 'chain',     label: 'Chain' },
+  { id: 'chain',     label: 'Charm' },
   { id: 'stackable', label: 'Stackable' },
 ]
 

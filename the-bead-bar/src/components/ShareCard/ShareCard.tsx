@@ -41,7 +41,7 @@ const DISPLAY_LABELS: Record<string, string> = {
   // Base styles
   'beaded':      'Beaded',
   'string':      'String',
-  'chain':       'Chain',
+  'chain':       'Charm',
   'stackable':   'Stackable',
   // Charms
   'star':        'Star',
