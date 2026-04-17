@@ -34,7 +34,7 @@ export function PromoBanner({ banner }: PromoBannerProps) {
     <section
       role="banner"
       aria-label="Promotional banner"
-      className={`w-full text-sm py-2 px-4 flex items-center justify-center gap-3 ${COLOR_CLASSES[banner.bgColor]}`}
+      className={`relative w-full text-sm py-2 px-10 flex items-center justify-center gap-3 ${COLOR_CLASSES[banner.bgColor]}`}
     >
       <span className="font-bold text-center">{banner.message}</span>
 
@@ -50,7 +50,7 @@ export function PromoBanner({ banner }: PromoBannerProps) {
       <button
         onClick={dismiss}
         aria-label="Dismiss banner"
-        className="ml-auto shrink-0 text-lg leading-none hover:opacity-70 transition-opacity"
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-lg leading-none hover:opacity-70 transition-opacity"
       >
         &times;
       </button>
