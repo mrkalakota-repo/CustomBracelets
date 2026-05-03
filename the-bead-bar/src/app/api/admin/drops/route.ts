@@ -12,7 +12,7 @@ const DropSchema = z.object({
   launchDate:     z.string().datetime({ message: 'launchDate must be an ISO 8601 datetime' }),
   stock:          z.number().int().min(0, 'stock must be non-negative'),
   previewImageUrl: z.string().default(''),
-  productIds:     z.array(z.string()).default([]),
+  productIds:     z.array(z.number().int()).default([]),
   socialCopy:     z.string().default(''),
 })
 

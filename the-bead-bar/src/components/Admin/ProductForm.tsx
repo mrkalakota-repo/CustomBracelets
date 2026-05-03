@@ -16,7 +16,6 @@ export function ProductForm({ initialProduct }: ProductFormProps) {
   const isEdit = !!initialProduct
 
   const [fields, setFields] = useState({
-    id:          initialProduct?.id          ?? '',
     name:        initialProduct?.name        ?? '',
     type:        initialProduct?.type        ?? 'beaded',
     price:       String(initialProduct?.price ?? ''),
@@ -54,7 +53,7 @@ export function ProductForm({ initialProduct }: ProductFormProps) {
         'Content-Type':  'application/json',
         'Authorization': `Bearer ${session.access_token}`,
       },
-      body: JSON.stringify({ ...fields, price, dropOnly: fields.dropOnly }),
+      body: JSON.stringify({ ...fields, price }),
     })
 
     if (!res.ok) {
@@ -70,21 +69,6 @@ export function ProductForm({ initialProduct }: ProductFormProps) {
 
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-5 max-w-lg">
-      {!isEdit && (
-        <div>
-          <label className="block text-sm font-medium mb-1">ID</label>
-          <input
-            className="input w-full"
-            name="id"
-            value={fields.id}
-            onChange={onChange}
-            required
-            placeholder="e.g. sage-beaded-v2"
-          />
-          <p className="text-xs text-text-mid mt-1">Used in URLs — lowercase, hyphens only, no spaces.</p>
-        </div>
-      )}
-
       <div>
         <label className="block text-sm font-medium mb-1">Name</label>
         <input className="input w-full" name="name" value={fields.name} onChange={onChange} required />

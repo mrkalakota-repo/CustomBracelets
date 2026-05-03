@@ -16,7 +16,7 @@ export function ProductDetailPage({ product }: ProductDetailPageProps) {
 
   function handleAddToCart() {
     addItem({
-      id:        product.id,
+      id:        String(product.id),
       name:      product.name,
       baseStyle: product.type,
       price:     product.price,

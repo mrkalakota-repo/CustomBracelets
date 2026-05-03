@@ -11,7 +11,7 @@ const DropUpdateSchema = z.object({
   launchDate:      z.string().datetime().optional(),
   stock:           z.number().int().min(0).optional(),
   previewImageUrl: z.string().optional(),
-  productIds:      z.array(z.string()).optional(),
+  productIds:      z.array(z.number().int()).optional(),
   socialCopy:      z.string().optional(),
 })
 

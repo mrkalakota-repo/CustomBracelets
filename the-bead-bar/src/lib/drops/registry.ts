@@ -7,7 +7,7 @@ export interface Drop {
   launchDate:      Date
   stock:           number
   previewImageUrl: string
-  productIds:      string[]
+  productIds:      number[]
   socialCopy:      string
 }
 
@@ -18,7 +18,7 @@ interface DropRow {
   launch_date:       string
   stock:             number
   preview_image_url: string
-  product_ids:       string[]
+  product_ids:       number[]
   social_copy:       string
 }
 

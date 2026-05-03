@@ -6,7 +6,7 @@ import { PromoBanner } from './PromoBanner'
 import type { Banner } from '@/lib/banners/banners'
 
 interface Product {
-  id:       string
+  id:       number
   name:     string
   type:     string
   price:    number

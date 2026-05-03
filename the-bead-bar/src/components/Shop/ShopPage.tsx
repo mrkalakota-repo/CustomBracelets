@@ -6,7 +6,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 
 interface Product {
-  id:       string
+  id:       number
   name:     string
   type:     string
   price:    number

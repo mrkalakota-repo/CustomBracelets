@@ -6,7 +6,6 @@ import { verifyAdminAuth } from '@/lib/supabase/adminAuth'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 
 const ProductSchema = z.object({
-  id:          z.string().min(1, 'id is required'),
   name:        z.string().min(1, 'name is required'),
   type:        z.enum(['beaded', 'string', 'chain', 'stackable']),
   price:       z.number().min(0, 'price must be non-negative'),
@@ -54,12 +53,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 })
   }
 
-  const { id, name, type, price, imageUrl, occasion, description, dropOnly } = parsed.data
+  const { name, type, price, imageUrl, occasion, description, dropOnly } = parsed.data
 
   const supabase = createServerSupabaseClient()
   const { data, error } = await supabase
     .from('products')
-    .insert({ id, name, type, price, image_url: imageUrl, occasion, description, drop_only: dropOnly })
+    .insert({ name, type, price, image_url: imageUrl, occasion, description, drop_only: dropOnly })
     .select()
     .single()
 

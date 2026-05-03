@@ -13,10 +13,10 @@ interface ProductsTableProps {
 export function ProductsTable({ products }: ProductsTableProps) {
   const router = useRouter()
   const { session } = useAuth()
-  const [deleting, setDeleting] = useState<string | null>(null)
+  const [deleting, setDeleting] = useState<number | null>(null)
   const [error, setError] = useState<string | null>(null)
 
-  async function handleDelete(id: string, name: string) {
+  async function handleDelete(id: number, name: string) {
     if (!session) return
     if (!confirm(`Delete "${name}"? This cannot be undone.`)) return
 

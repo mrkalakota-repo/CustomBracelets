@@ -57,8 +57,8 @@ export function DropForm({ initialDrop }: DropFormProps) {
     const launchDate = new Date(fields.launchDate + ':00Z').toISOString()
     const productIds = fields.productIds
       .split(',')
-      .map(s => s.trim())
-      .filter(Boolean)
+      .map(s => parseInt(s.trim(), 10))
+      .filter(n => !isNaN(n))
 
     setLoading(true)
     setError(null)
