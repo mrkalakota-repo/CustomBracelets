@@ -2,9 +2,11 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { DropState } from '@/lib/drops/state'
 import { AgeGateForm } from '@/components/AgeGateForm/AgeGateForm'
 import { TurnstileWidget } from '@/components/Turnstile/TurnstileWidget'
+import type { Product } from '@/lib/products/catalog'
 
 interface Drop {
   id:              string
@@ -18,11 +20,14 @@ interface DropPageProps {
   drop:               Drop
   state:              DropState
   stock:              number
+  products?:          Product[]
   onNotifySubmit?:    (email: string, turnstileToken?: string) => Promise<void> | void
   onWaitlistSubmit?:  (email: string, turnstileToken?: string) => Promise<void> | void
 }
 
-export function DropPage({ drop, state, stock, onNotifySubmit, onWaitlistSubmit }: DropPageProps) {
+export function DropPage({ drop, state, stock, products = [], onNotifySubmit, onWaitlistSubmit }: DropPageProps) {
+  const showProducts = state !== DropState.UPCOMING && products.length > 0
+
   return (
     <div className="drop-page page-container py-8 flex flex-col gap-6">
       <div className="text-center">
@@ -48,6 +53,8 @@ export function DropPage({ drop, state, stock, onNotifySubmit, onWaitlistSubmit 
       {state === DropState.ENDED && (
         <EndedView dropName={drop.name} />
       )}
+
+      {showProducts && <ShopTheDrop products={products} />}
     </div>
   )
 }
@@ -265,5 +272,36 @@ function EndedView({ dropName }: { dropName: string }) {
     <div data-testid="ended-message" className="text-center py-8">
       <p className="text-text-mid">The {dropName} drop has ended. Check back for upcoming drops!</p>
     </div>
+  )
+}
+
+// ─── SHOP THE DROP ────────────────────────────────────────────────────────────
+
+function ShopTheDrop({ products }: { products: Product[] }) {
+  return (
+    <section data-testid="shop-the-drop" className="flex flex-col gap-4">
+      <h2 className="text-lg font-semibold text-text-dark">Shop This Drop</h2>
+      <div className="grid-2">
+        {products.map(p => (
+          <Link key={p.id} href={`/shop/${p.id}`} className="card block">
+            <div data-testid="drop-product-card">
+              <div className="relative aspect-square w-full overflow-hidden">
+                <Image
+                  src={p.imageUrl}
+                  alt={p.name}
+                  fill
+                  sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+                  className="object-cover"
+                />
+              </div>
+              <div className="p-3">
+                <p className="font-medium text-sm text-text-dark truncate">{p.name}</p>
+                <p className="text-sage font-semibold text-sm">${p.price}</p>
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </section>
   )
 }

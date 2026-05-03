@@ -4,12 +4,14 @@ import Link from 'next/link'
 import { DropPage } from './DropPage'
 import { getDropState } from '@/lib/drops/state'
 import type { Drop } from '@/lib/drops/registry'
+import type { Product } from '@/lib/products/catalog'
 
 interface DropRouteProps {
-  drop: Drop | null
+  drop:     Drop | null
+  products: Product[]
 }
 
-export function DropRoute({ drop }: DropRouteProps) {
+export function DropRoute({ drop, products }: DropRouteProps) {
   if (!drop) {
     return (
       <div data-testid="drop-not-found">
@@ -58,6 +60,7 @@ export function DropRoute({ drop }: DropRouteProps) {
       }}
       state={state}
       stock={drop.stock}
+      products={products}
       onNotifySubmit={handleNotify}
       onWaitlistSubmit={handleWaitlist}
     />
