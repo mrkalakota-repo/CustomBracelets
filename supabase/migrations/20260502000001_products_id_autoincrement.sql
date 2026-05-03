@@ -7,6 +7,8 @@ alter table public.products alter column id set default nextval('public.products
 alter sequence public.products_id_seq owned by public.products.id;
 
 -- Convert drops.product_ids from text[] to bigint[]
+alter table public.drops alter column product_ids drop default;
 alter table public.drops
   alter column product_ids type bigint[]
   using product_ids::bigint[];
+alter table public.drops alter column product_ids set default '{}'::bigint[];
