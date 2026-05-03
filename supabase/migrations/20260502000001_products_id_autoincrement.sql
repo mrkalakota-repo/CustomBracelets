@@ -9,4 +9,4 @@ alter sequence public.products_id_seq owned by public.products.id;
 -- Convert drops.product_ids from text[] to bigint[]
 alter table public.drops
   alter column product_ids type bigint[]
-  using array(select unnest(product_ids)::bigint);
+  using product_ids::bigint[];
