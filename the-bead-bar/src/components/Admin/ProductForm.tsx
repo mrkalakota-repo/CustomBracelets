@@ -23,6 +23,7 @@ export function ProductForm({ initialProduct }: ProductFormProps) {
     imageUrl:    initialProduct?.imageUrl    ?? '',
     occasion:    initialProduct?.occasion    ?? '',
     description: initialProduct?.description ?? '',
+    dropOnly:    initialProduct?.dropOnly    ?? false,
   })
   const [error,   setError]   = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -53,7 +54,7 @@ export function ProductForm({ initialProduct }: ProductFormProps) {
         'Content-Type':  'application/json',
         'Authorization': `Bearer ${session.access_token}`,
       },
-      body: JSON.stringify({ ...fields, price }),
+      body: JSON.stringify({ ...fields, price, dropOnly: fields.dropOnly }),
     })
 
     if (!res.ok) {
@@ -140,6 +141,18 @@ export function ProductForm({ initialProduct }: ProductFormProps) {
           rows={3}
         />
       </div>
+
+      <label className="flex items-center gap-2 cursor-pointer select-none">
+        <input
+          type="checkbox"
+          name="dropOnly"
+          checked={fields.dropOnly}
+          onChange={e => setFields(prev => ({ ...prev, dropOnly: e.target.checked }))}
+          className="accent-[var(--sage)] w-4 h-4"
+        />
+        <span className="text-sm font-medium">Drop exclusive</span>
+        <span className="text-xs text-text-mid">(hidden from the regular shop)</span>
+      </label>
 
       {error && <p className="text-red-600 text-sm">{error}</p>}
 

@@ -12,6 +12,7 @@ const ProductUpdateSchema = z.object({
   imageUrl:    z.string().optional(),
   occasion:    z.string().optional(),
   description: z.string().optional(),
+  dropOnly:    z.boolean().optional(),
 })
 
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -39,6 +40,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   if (parsed.data.imageUrl    !== undefined) update.image_url   = parsed.data.imageUrl
   if (parsed.data.occasion    !== undefined) update.occasion    = parsed.data.occasion
   if (parsed.data.description !== undefined) update.description = parsed.data.description
+  if (parsed.data.dropOnly    !== undefined) update.drop_only   = parsed.data.dropOnly
 
   if (Object.keys(update).length === 0) {
     return NextResponse.json({ error: 'No fields to update' }, { status: 400 })

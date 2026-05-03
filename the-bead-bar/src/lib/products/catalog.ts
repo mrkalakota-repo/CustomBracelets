@@ -8,6 +8,7 @@ export interface Product {
   imageUrl:    string
   occasion:    string
   description: string
+  dropOnly:    boolean
 }
 
 interface ProductRow {
@@ -18,6 +19,7 @@ interface ProductRow {
   image_url:   string
   occasion:    string
   description: string
+  drop_only:   boolean
 }
 
 function rowToProduct(row: ProductRow): Product {
@@ -29,6 +31,7 @@ function rowToProduct(row: ProductRow): Product {
     imageUrl:    row.image_url,
     occasion:    row.occasion,
     description: row.description,
+    dropOnly:    row.drop_only,
   }
 }
 
@@ -37,6 +40,7 @@ export async function getAllProducts(): Promise<Product[]> {
   const { data, error } = await supabase
     .from('products')
     .select('*')
+    .eq('drop_only', false)
     .order('created_at', { ascending: true })
 
   if (error) throw new Error(`Failed to load products: ${error.message}`)

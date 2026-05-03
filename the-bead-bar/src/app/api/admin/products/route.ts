@@ -13,6 +13,7 @@ const ProductSchema = z.object({
   imageUrl:    z.string().default(''),
   occasion:    z.string().default(''),
   description: z.string().default(''),
+  dropOnly:    z.boolean().default(false),
 })
 
 export async function GET(req: Request) {
@@ -53,12 +54,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 })
   }
 
-  const { id, name, type, price, imageUrl, occasion, description } = parsed.data
+  const { id, name, type, price, imageUrl, occasion, description, dropOnly } = parsed.data
 
   const supabase = createServerSupabaseClient()
   const { data, error } = await supabase
     .from('products')
-    .insert({ id, name, type, price, image_url: imageUrl, occasion, description })
+    .insert({ id, name, type, price, image_url: imageUrl, occasion, description, drop_only: dropOnly })
     .select()
     .single()
 
