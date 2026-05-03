@@ -103,6 +103,10 @@ Prices are always **recalculated server-side** — client-supplied prices are ig
 
 **The website product/drop/banner catalog is now database-driven.** The static arrays `ALL_PRODUCTS` and `DROP_REGISTRY` no longer exist — use `getAllProducts()`, `getProductById()`, `getAllDrops()`, `getDropById()` (all async, in `catalog.ts` / `registry.ts`). Banners are in `src/lib/banners/banners.ts`. The app still uses hardcoded static arrays.
 
+**`Product.id` is `number`** (bigint in DB, auto-assigned — no ID field in the admin create form). `getAllProducts()` filters out `drop_only = true` products so they never appear in the regular shop. Use `getProductById(id)` (accepts `string | number`) to fetch any product including drop-exclusives. When adding a product to the cart, convert: `id: String(product.id)` — `CartItem.id` is `string` because it also holds custom builder items.
+
+**Drop-exclusive products**: mark a product "Drop exclusive" in the admin form to hide it from `/shop`. The drop detail page (`/drops/[id]`) fetches products by ID from `drop.productIds` using `getProductById` and renders a "Shop This Drop" grid for LIVE, SOLD_OUT, and ENDED states (hidden for UPCOMING).
+
 **Dynamic rendering on live-data pages**: any page that reads from the database and must reflect real-time changes (homepage, all admin pages) must export `export const dynamic = 'force-dynamic'`. Without it, Next.js statically renders the page at build time on Amplify and new DB records won't appear until the next deployment. The homepage (`app/page.tsx`) and admin layout (`app/admin/layout.tsx`) already have this.
 
 ## Auth
@@ -158,8 +162,8 @@ All in `supabase/migrations/`. Never edit existing migration files — always ad
 
 | Table | Key columns | Notes |
 |-------|-------------|-------|
-| `products` | id (text PK), name, type (enum), price, image_url, occasion, description | Public SELECT via RLS; admin writes via service-role |
-| `drops` | id (text PK), name, theme, launch_date, stock, preview_image_url, product_ids (text[]), social_copy | Same RLS pattern |
+| `products` | id (bigint PK, auto-increment), name, type (enum), price, image_url, occasion, description, drop_only (bool) | Public SELECT via RLS; admin writes via service-role |
+| `drops` | id (text PK), name, theme, launch_date, stock, preview_image_url, product_ids (bigint[]), social_copy | Same RLS pattern |
 | `banners` | id (serial PK), message, cta_label, cta_url, bg_color (sage/gold/cream), is_active | Only one `is_active=true` at a time |
 | `orders` / `order_items` | — | Written by `stripe-webhook` edge function |
 | `inventory` | id, name, quantity | Decremented by `decrement_inventory` RPC (returns bool — check for oversell) |
@@ -167,6 +171,14 @@ All in `supabase/migrations/`. Never edit existing migration files — always ad
 **Supabase Storage bucket**: `product-images` (public). Holds product and drop preview images uploaded via the admin dashboard. Public URLs follow the pattern `https://<project>.supabase.co/storage/v1/object/public/product-images/<filename>`. `next.config.ts` has a `remotePatterns` entry for `*.supabase.co` so `next/image` accepts these URLs.
 
 **Migration idempotency**: all `CREATE TABLE` statements use `IF NOT EXISTS`; all `CREATE POLICY` statements are preceded by `DROP POLICY IF EXISTS` (PostgreSQL does not support `CREATE POLICY IF NOT EXISTS`).
+
+**Casting array column types**: when changing a column from `text[]` to `bigint[]`, the column default must be dropped first, then the type altered, then the default restored — PostgreSQL cannot cast the default automatically. Also, `USING` clauses do not allow subqueries; use a direct cast (`product_ids::bigint[]`) instead of `ARRAY(SELECT unnest(...))`.
+
+```sql
+alter table t alter column col drop default;
+alter table t alter column col type bigint[] using col::bigint[];
+alter table t alter column col set default '{}'::bigint[];
+```
 
 ## Known API Pitfalls
 
